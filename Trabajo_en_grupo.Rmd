@@ -1,0 +1,56 @@
+---
+title: "Proyecto en Grupo"
+author: "Natalia Fitipaldi, Matías Muñoz, Pedro Milat, Mateo Pérez"
+date: "Julio 2021"
+output:
+  pdf_document:
+    latex_engine: xelatex
+  fig_caption: true
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy.opts = list(width.cutoff = 50), tidy = TRUE, fig.pos = 'h', out.extra = '', message = FALSE, warning = FALSE)
+```
+
+
+```{r, echo=TRUE}
+library(ggplot2)
+library(gapminder)
+library(tidyverse)
+library(here)
+library(lubridate)
+Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
+```
+
+```{r, eval=FALSE}
+
+ggplot(data = Datos %>%
+  group_by(Departamento, Sexo) %>% 
+  summarise(cant = n()), aes(x = Departamento, y = cant, fill = Sexo)) +
+  geom_bar(stat = "identity", position = "stack") +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = "Departamento donde ocurrió el accidente", y = "Cantidad de accidentes", fill = "Sexo") +
+  theme(axis.text.x = element_text(angle = 60))
+
+ggplot(data = Datos_2 %>%
+  group_by(`Rol`, Sexo) %>% 
+  summarise(cant = n()), aes(x = `Rol`, y = cant, fill = Sexo)) +
+  geom_bar(stat = "identity", position = "stack") +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(axis.text.x = element_text(angle = 60))
+
+f <- Datos %>% 
+  mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
+  mutate(Ano = year(Fecha_y_hora)) %>% 
+  mutate(Mes = month(Fecha_y_hora)) %>% 
+  mutate(Dia = day(Fecha_y_hora)) %>% 
+  group_by(Ano) %>% 
+  summarise(cantidad = n())
+
+ggplot(data = f, aes(x = Ano, y = cantidad)) +
+  geom_line()+
+  geom_point()
+
+
+```
