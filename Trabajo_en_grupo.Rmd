@@ -47,7 +47,7 @@ Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
 
 ## Evolución en el tiempo de la cantidad de fallecidos en accidentes de tránsito
  
-```{r temporal, echo = FALSE}
+```{r temporal, echo = FALSE, fig.cap="Lo que se observa en el grafico es que no hay relacion entre la cantidad de accidentes y los años. En todos los años hay mucha variacion de accidentes, donde aparecen picos altos y bajos en los distintos meses del año. La cantidad de accidentes es irregular durante un mismo año." }
 
 f <- Datos %>% 
   mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
@@ -71,7 +71,7 @@ ggplot(data = f, aes(x = Mes, y = cantidad, colour = as.factor(Ano))) +
 \newpage
 
 ## Mapa departamental con la cantidad de fallecidos en accidentes de tránsito entre 2013 y 2019
-```{r mapa, echo = FALSE,message=FALSE, results="asis"}
+```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Los departamentos con mas accidentes son Montevideo y Canelones, con 915 y 686 accidentes respectivamente. Entre los dos departamentos, se acumula el 46% de accidentes del pais. Analogamente, los departamentos con menos accidentes son Treinta y Tres con 44 accidentes, y Flores que acumula un total de 37. ." }
 
 mapaine <- readOGR(here("ine_depto.shp"),verbose = FALSE)
 
@@ -112,7 +112,7 @@ tabla %>% xtable() %>% print(include.rownames = FALSE)
 \newpage
 
 ## Correlación entre el Rol y el Sexo
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.cap= "La conclusion del grafico es que la mayor cantidad de accidentes ocurren por causa del conductor. Dentro de este rol, notamos la amplia diferencia entre la cantidad de hombres contra la cantidad de accidentes de conductoras mujeres. El hombre genera, aproximadamente, 8 veces mas accidentes que lo que generan las mujeres. Con respecto a los otros roles, vemos que en el rubro pasajero es mayor la influencia de la mujer mientras que el rubro peaton, el hombre supera a la mujer."}
 Datos %>%
   filter(!is.na(Sexo)) %>%
   group_by(`Rol`,Sexo) %>%
