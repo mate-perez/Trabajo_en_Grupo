@@ -14,7 +14,25 @@ knitr::opts_chunk$set(echo = TRUE, tidy.opts = list(width.cutoff = 50), tidy = T
 ```
 
 
-```{r, echo=TRUE}
+## Introducción
+
+El presente documento contiene el resultado del trabajo final de Nuevas Tecnologías para el Análisis Estadístico de Datos cuyo objetivo es utilizar adecuadamente las herramientas computacionales aprendidas en clase para realizar el análisis exploratorio de unos datos de interés.  
+El análisis tendrá por objetivo obtener una descripción en términos estadísticos sobre los datos bajo estudio, así como plantear y responder preguntas de interés que formarán parte del problema a resolver.  
+Este estudio se hará mediante la elaboración de gráficos y resúmenes sobre las variables relevantes que componen la base de información así como también el planteo de una applicacion web en shiny.
+
+## Conjunto de datos
+
+Esta análisis se va a basar en datos referentes a personas fallecidas en siniestros de tránsito en nuestro país, entre los años 2013 a 2019, extraidos del catalogo de datos de Uruguay (https://catalogodatos.gub.uy/dataset/unasev-fallecidos_siniestros_transito).
+Juntamos los datos de cada año para asi poder hacer alguna pregunta temporal y ver si al pasar del tiempo hay algún cambio notorio.
+Los datos con los que trabajaremos tienen 3477 observaciones y 14 variables, entre las cuales tenemos discretas, continuas y categóricas.
+
+## Preguntas:
+
+###   * Evolución en el tiempo de la cantidad de fallecidos en accidentes de tránsito
+###   * Mapa departamental con la cantidad de fallecidos en accidentes de tránsito entre 2013 y 2019
+###   * Correlacion entre el rol y el sexo??? 
+
+```{r data, echo = FALSE}
 library(ggplot2)
 library(gapminder)
 library(tidyverse)
@@ -25,38 +43,34 @@ library(rgdal)
 Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
 ```
 
-```{r, eval=FALSE}
+\newpage
 
-ggplot(data = Datos %>%
-  group_by(Departamento, Sexo) %>% 
-  summarise(cant = n()), aes(x = Departamento, y = cant, fill = Sexo)) +
-  geom_bar(stat = "identity", position = "stack") +
-  scale_fill_brewer(palette = "Dark2") +
-  labs(x = "Departamento donde ocurrió el accidente", y = "Cantidad de accidentes", fill = "Sexo") +
-  theme(axis.text.x = element_text(angle = 60))
-
-ggplot(data = Datos %>%
-  group_by(`Rol`, Sexo) %>% 
-  summarise(cant = n()), aes(x = `Rol`, y = cant, fill = Sexo)) +
-  geom_bar(stat = "identity", position = "stack") +
-  scale_fill_brewer(palette = "Dark2") +
-  theme(axis.text.x = element_text(angle = 60))
+```{r temporal, echo = FALSE}
 
 f <- Datos %>% 
   mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
   mutate(Ano = year(Fecha_y_hora)) %>% 
   mutate(Mes = month(Fecha_y_hora)) %>% 
-  mutate(Dia = day(Fecha_y_hora)) %>% 
-  group_by(Ano) %>% 
+  group_by(Ano, Mes) %>% 
   summarise(cantidad = n())
 
-ggplot(data = f, aes(x = Ano, y = cantidad)) +
-  geom_line()+
-  geom_point()
+ggplot(data = f, aes(x = Mes, y = cantidad, colour = as.factor(Ano))) +
+  geom_line(size = 1) +
+  geom_point(size = 1.5) +
+  facet_wrap( ~Ano) +
+  scale_color_brewer(palette = "Dark2", guide = "none") +
+  scale_x_discrete(limit = c(1:12), labels = c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
+  theme(axis.text.x = element_text(angle = 60),
+        text = element_text(size = 10)) +
+  labs(x = "Mes", y = "Cantidad")
 
+```
 
+\newpage
 
-mapaine= readOGR ("C:/Users/Usuario/Documents/Rmarkdown/Trabajo_en_Grupo","ine_depto")
+```{r mapa, echo = FALSE}
+
+mapaine = readOGR(here("ine_depto.shp"))
 
 dframe_depto <- ggplot2::fortify(mapaine)
 
@@ -85,6 +99,5 @@ geom_polygon(aes(fill = siniestros)) +
   scale_fill_viridis_c()+
   labs(x="Longitud", y="Latitud",fill="Cantidad de accidentes",
        title="Cantidad de accidentes por departamento")
+
 ```
-
-
