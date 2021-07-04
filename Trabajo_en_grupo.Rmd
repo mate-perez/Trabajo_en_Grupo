@@ -10,7 +10,7 @@ output:
 
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE, tidy.opts = list(width.cutoff = 50), tidy = TRUE, fig.pos = 'h', out.extra = '', message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, tidy.opts = list(width.cutoff = 50), tidy = TRUE, fig.pos = 'h', out.extra = '', message = FALSE, warning = FALSE)
 ```
 
 
@@ -61,10 +61,15 @@ ggplot(data = f, aes(x = Mes, y = cantidad, colour = as.factor(Ano))) +
   geom_point(size = 1.5) +
   facet_wrap( ~Ano) +
   scale_color_brewer(palette = "Dark2", guide = "none") +
-  scale_x_discrete(limit = c(1:12), labels = c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
+  scale_x_discrete(limit = c(1:12),
+                   labels = c("Enero", "Febrero", "Marzo", "Abril", 
+                              "Mayo", "Junio", "Julio", "Agosto",
+                              "Setiembre", "Octubre", "Noviembre",
+                              "Diciembre")) +
   theme(axis.text.x = element_text(angle = 90),
         text = element_text(size = 10)) +
-  labs(x = "Mes", y = "Cantidad", title = "Evolución temporal de la cantidad de accidentes")
+  labs(x = "Mes", y = "Cantidad", 
+       title = "Evolución temporal de la cantidad de accidentes")
 
 ```
 
@@ -120,6 +125,71 @@ Datos %>%
   ggplot(aes(x = `Rol`, y = cant, fill = Sexo)) +
     geom_bar(stat="identity", position = "dodge") +
     scale_fill_brewer(palette = "Set1") +
-    labs(y = "Cantidad", title = "Cantidad de accidentes según el rol de la persona", subtitle = "Diferenciado por sexo")
+    labs(y = "Cantidad", 
+         title = "Cantidad de accidentes según el rol de la persona",
+         subtitle = "Diferenciado por sexo")
 
 ```
+
+\newpage
+
+Nuevos datos para ver si el descenso en la movilidad debido a la pandemia disminuyó el número de fallecidos por accidentes de tránsito.
+
+```{r}
+#Datos por accidentes
+Montevideo2020 <- read_csv(here("Datos/Montevideo2020.txt"))
+Dptos2020 <- read.csv(here("Datos/Dptos2020.txt"))
+Montevideo2021 <- read_csv(here("Datos/Montevideo2021.txt"))
+Dptos2021 <- read.csv(here("Datos/Dptos2021.txt"))
+```
+
+```{r}
+names(Montevideo2020) <- names(Dptos2020)
+names(Montevideo2021) <- names(Dptos2021)
+
+datos_20_21 <- rbind(Montevideo2020, Dptos2020,
+                     Montevideo2021, Dptos2021)
+```
+
+```{r}
+personas_mdeo_2020 <- read_csv(here("Datos/personas_mdeo_2020.txt"))
+personas_dptos_2020 <- read_csv(here("Datos/personas_dptos_2020.txt"))
+
+personas_2020 <- rbind(personas_mdeo_2020, personas_dptos_2020)
+```
+
+```{r}
+#Nos quedamos con aquellas observaciones que tienen como Tipo de resultado a FALLECIDO EN CENTRO DE ASISTENCIA o FALLECIDO EN EL LUGAR
+fallecidos_2020 <-  personas_2020[grepl("FALLECIDO+", personas_2020$`Tipo de resultado`), ]
+```
+
+```{r}
+f_2020 <- fallecidos_2020 %>% 
+  mutate(Fecha = dmy(Fecha)) %>% 
+  mutate(Ano = year(Fecha)) %>% 
+  mutate(Mes = month(Fecha)) %>% 
+  group_by(Ano, Mes) %>% 
+  summarise(cantidad = n())
+```
+
+```{r}
+f_total <- rbind(f, f_2020) 
+```
+
+```{r}
+f_total$mes_año <- my(paste(f_total$Mes, f_total$Ano, sep = "-"))
+```
+
+
+```{r}
+ggplot(data = f_total, aes(x = mes_año, y = cantidad)) +
+  geom_line(size = 1, color = "blue") +
+  geom_point(size = 1.5) +
+  scale_color_brewer(palette = "Dark2", guide = "none") +
+  theme(axis.text.x = element_text(angle = 90),
+        text = element_text(size = 10)) +
+  labs(x = "Fecha", y = "Cantidad", 
+       title = "Evolución temporal de la cantidad de accidentes") +
+  theme_bw()
+```
+
