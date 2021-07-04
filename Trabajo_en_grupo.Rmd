@@ -20,6 +20,8 @@ library(gapminder)
 library(tidyverse)
 library(here)
 library(lubridate)
+library(rgdal)
+
 Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
 ```
 
@@ -33,7 +35,7 @@ ggplot(data = Datos %>%
   labs(x = "Departamento donde ocurrió el accidente", y = "Cantidad de accidentes", fill = "Sexo") +
   theme(axis.text.x = element_text(angle = 60))
 
-ggplot(data = Datos_2 %>%
+ggplot(data = Datos %>%
   group_by(`Rol`, Sexo) %>% 
   summarise(cant = n()), aes(x = `Rol`, y = cant, fill = Sexo)) +
   geom_bar(stat = "identity", position = "stack") +
@@ -53,4 +55,36 @@ ggplot(data = f, aes(x = Ano, y = cantidad)) +
   geom_point()
 
 
+
+mapaine= readOGR ("C:/Users/Usuario/Documents/Rmarkdown/Trabajo_en_Grupo","ine_depto")
+
+dframe_depto <- ggplot2::fortify(mapaine)
+
+depart = dframe_depto %>%
+mutate(Departamento = id)
+
+deptos= depart%>%
+mutate(Departamento=recode(Departamento, `0` = "MONTEVIDEO",
+`8` = "RIO NEGRO", `9` = "RIVERA",`7`="PAYSANDU",
+`1`="ARTIGAS",`2`="CANELONES",`19`="CERRO LARGO",
+`3`="COLONIA",`4`="DURAZNO",`5`="FLORIDA",`6`="LAVALLEJA",
+`10`="ROCHA",`11`="SALTO", `12`="SAN JOSE",`13`="SORIANO",
+`14`="TREINTA Y TRES", `16`="TACUAREMBO",`17`="FLORES",
+`18`="MALDONADO"))
+
+cantidad =Datos%>%
+group_by(Departamento)%>%
+summarise(siniestros=n())
+
+mapauru <- left_join(deptos, cantidad, by = "Departamento")
+
+mapauru %>%
+filter(id!=15) %>%
+ggplot(aes(x = long, y = lat, group = group)) +
+geom_polygon(aes(fill = siniestros)) +
+  scale_fill_viridis_c()+
+  labs(x="Longitud", y="Latitud",fill="Cantidad de accidentes",
+       title="Cantidad de accidentes por departamento")
 ```
+
+
