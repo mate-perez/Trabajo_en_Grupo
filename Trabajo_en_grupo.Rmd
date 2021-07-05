@@ -28,9 +28,9 @@ Los datos con los que trabajaremos tienen 3477 observaciones y 14 variables, ent
 
 ## Preguntas:
 
-###   * Evolución en el tiempo de la cantidad de fallecidos en accidentes de tránsito
-###   * Mapa departamental con la cantidad de fallecidos en accidentes de tránsito entre 2013 y 2019
-###   * Correlación entre el rol y el sexo??? 
+###   * ¿La cantidad de fallecidos en accidentes de tránsito aumenta en algún período específico a lo largo de los años?
+###   * En los años 2013 a 2019, ¿cuáles fueron los departamentos que han sufrido mayores accidentes de tránsito, y cuáles fueron los que han sufrido menos?
+###   * ¿Existe una correlación entre el rol que cumplía la persona fallecida y el sexo de la misma? 
 
 ```{r data, echo = FALSE}
 library(gapminder)
@@ -45,9 +45,9 @@ Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
 
 \newpage
 
-## Evolución en el tiempo de la cantidad de fallecidos en accidentes de tránsito
+## ¿La cantidad de fallecidos en accidentes de tránsito aumenta en algún período específico a lo largo de los años?
  
-```{r temporal, echo = FALSE, fig.cap="Lo que se observa en el grafico es que no hay relacion entre la cantidad de accidentes y los años. En todos los años hay mucha variacion de accidentes, donde aparecen picos altos y bajos en los distintos meses del año. La cantidad de accidentes es irregular durante un mismo año." }
+```{r temporal, echo = FALSE, fig.cap="Lo que se observa en el gráfico es que no hay relación entre la cantidad de accidentes y los años. En todos los años hay una gran variación de accidentes, donde aparecen picos altos y bajos en los distintos meses del año. La cantidad de accidentes es irregular durante un mismo año." }
 
 f <- Datos %>% 
   mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
@@ -62,7 +62,7 @@ ggplot(data = f, aes(x = Mes, y = cantidad, colour = as.factor(Ano))) +
   facet_wrap( ~Ano) +
   scale_color_brewer(palette = "Dark2", guide = "none") +
   scale_x_discrete(limit = c(1:12),
-                   labels = c("Enero", "Febrero", "Marzo", "Abril", 
+                   labels = c("Enero", "Febrero", "Marzo", "Abril",
                               "Mayo", "Junio", "Julio", "Agosto",
                               "Setiembre", "Octubre", "Noviembre",
                               "Diciembre")) +
@@ -70,64 +70,6 @@ ggplot(data = f, aes(x = Mes, y = cantidad, colour = as.factor(Ano))) +
         text = element_text(size = 10)) +
   labs(x = "Mes", y = "Cantidad", 
        title = "Evolución temporal de la cantidad de accidentes")
-
-```
-
-\newpage
-
-## Mapa departamental con la cantidad de fallecidos en accidentes de tránsito entre 2013 y 2019
-```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Los departamentos con mas accidentes son Montevideo y Canelones, con 915 y 686 accidentes respectivamente. Entre los dos departamentos, se acumula el 46% de accidentes del pais. Analogamente, los departamentos con menos accidentes son Treinta y Tres con 44 accidentes, y Flores que acumula un total de 37. ." }
-
-mapaine <- readOGR(here("ine_depto.shp"),verbose = FALSE)
-
-dframe_depto <- ggplot2::fortify(mapaine)
-
-deptos <- dframe_depto %>%
-rename(Departamento = id) %>%
-mutate(Departamento=recode(Departamento, `0` = "MONTEVIDEO",
-`8` = "RIO NEGRO", `9` = "RIVERA",`7`="PAYSANDU",
-`1`="ARTIGAS",`2`="CANELONES",`19`="CERRO LARGO",
-`3`="COLONIA",`4`="DURAZNO",`5`="FLORIDA",`6`="LAVALLEJA",
-`10`="ROCHA",`11`="SALTO", `12`="SAN JOSE",`13`="SORIANO",
-`14`="TREINTA Y TRES", `16`="TACUAREMBO",`17`="FLORES",
-`18`="MALDONADO"))
-
-
-tabla <- Datos %>%
-group_by(Departamento) %>%
-summarise(n=n()) %>%
-mutate(prop = n/sum(n, na.rm = TRUE)) %>%
-rename(Cantidad = n, Proporción = prop)
-
-mapauru <- left_join(deptos, tabla, by = "Departamento")
-
-mapauru %>%
-filter(Departamento!=15) %>%
-ggplot(aes(x = long, y = lat, group = group)) +
-geom_polygon(aes(fill = Cantidad)) +
-  scale_fill_viridis_c() +
-  labs(x="Longitud", y="Latitud",fill="Cantidad de accidentes",
-       title="Cantidad de accidentes por departamento")
-
-options(xtable.comment = FALSE)
-
-tabla %>% xtable() %>% print(include.rownames = FALSE)
-```
-
-\newpage
-
-## Correlación entre el Rol y el Sexo
-```{r, echo=FALSE, fig.cap= "La conclusion del grafico es que la mayor cantidad de accidentes ocurren por causa del conductor. Dentro de este rol, notamos la amplia diferencia entre la cantidad de hombres contra la cantidad de accidentes de conductoras mujeres. El hombre genera, aproximadamente, 8 veces mas accidentes que lo que generan las mujeres. Con respecto a los otros roles, vemos que en el rubro pasajero es mayor la influencia de la mujer mientras que el rubro peaton, el hombre supera a la mujer."}
-Datos %>%
-  filter(!is.na(Sexo)) %>%
-  group_by(`Rol`,Sexo) %>%
-  summarise(cant =n()) %>%
-  ggplot(aes(x = `Rol`, y = cant, fill = Sexo)) +
-    geom_bar(stat="identity", position = "dodge") +
-    scale_fill_brewer(palette = "Set1") +
-    labs(y = "Cantidad", 
-         title = "Cantidad de accidentes según el rol de la persona",
-         subtitle = "Diferenciado por sexo")
 
 ```
 
@@ -170,18 +112,14 @@ f_2020 <- fallecidos_2020 %>%
   mutate(Mes = month(Fecha)) %>% 
   group_by(Ano, Mes) %>% 
   summarise(cantidad = n())
-```
 
-```{r}
 f_total <- rbind(f, f_2020) 
-```
 
-```{r}
 f_total$mes_año <- my(paste(f_total$Mes, f_total$Ano, sep = "-"))
 ```
 
 
-```{r}
+```{r,fig.cap="Podemos apreciar que alrededor de marzo de 2020, momento en el cual empezó la pandemia, la cantidad de accidentes de tránsito tiene un gran descenso, debido probablemente a la disminución de movilidad antes mencionada."}
 ggplot(data = f_total, aes(x = mes_año, y = cantidad)) +
   geom_line(size = 1, color = "blue") +
   geom_point(size = 1.5) +
@@ -192,4 +130,70 @@ ggplot(data = f_total, aes(x = mes_año, y = cantidad)) +
        title = "Evolución temporal de la cantidad de accidentes") +
   theme_bw()
 ```
+
+
+
+
+
+\newpage
+
+## En los años 2013 a 2019, ¿cuáles fueron los departamentos que han sufrido mayores accidentes de tránsito, y cuáles fueron los que han sufrido menos?
+
+```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Los departamentos con más accidentes son Montevideo y Canelones, con 915 y 686 accidentes respectivamente. Entre los dos departamentos, se acumula el 46 por ciento de accidentes del país. Análogamente, los departamentos con menos accidentes son Treinta y Tres con 44 accidentes, y Flores que acumula un total de 37." }
+
+mapaine <- readOGR(here("ine_depto.shp"),verbose = FALSE)
+
+dframe_depto <- ggplot2::fortify(mapaine)
+
+deptos <- dframe_depto %>%
+rename(Departamento = id) %>%
+mutate(Departamento=recode(Departamento, `0` = "MONTEVIDEO",
+`8` = "RIO NEGRO", `9` = "RIVERA",`7`="PAYSANDU",
+`1`="ARTIGAS",`2`="CANELONES",`19`="CERRO LARGO",
+`3`="COLONIA",`4`="DURAZNO",`5`="FLORIDA",`6`="LAVALLEJA",
+`10`="ROCHA",`11`="SALTO", `12`="SAN JOSE",`13`="SORIANO",
+`14`="TREINTA Y TRES", `16`="TACUAREMBO",`17`="FLORES",
+`18`="MALDONADO"))
+
+
+tabla <- Datos %>%
+group_by(Departamento) %>%
+summarise(n=n()) %>%
+mutate(prop = n/sum(n, na.rm = TRUE)) %>%
+rename(Cantidad = n, Proporción = prop)
+
+mapauru <- left_join(deptos, tabla, by = "Departamento")
+
+mapauru %>%
+filter(Departamento!=15) %>%
+ggplot(aes(x = long, y = lat, group = group)) +
+geom_polygon(aes(fill = Cantidad)) +
+  scale_fill_viridis_c() +
+  labs(x="Longitud", y="Latitud",fill="Cantidad de accidentes",
+       title="Cantidad de accidentes por departamento")
+
+options(xtable.comment = FALSE)
+
+tabla %>% xtable() %>% print(include.rownames = FALSE)
+```
+
+\newpage
+
+## ¿Existe una correlación entre el rol que cumplía la persona fallecida y el sexo de la misma? 
+
+```{r, echo=FALSE, fig.cap= "La conclusión del gráfico es que la mayor cantidad de accidentes ocurren por causa del conductor. Dentro de este rol, notamos la amplia diferencia entre la cantidad de conductores hombres contra la cantidad de accidentes de conductoras mujeres. El hombre genera, aproximadamente, 8 veces más accidentes que lo que generan las mujeres. Con respecto a los otros roles, vemos que en el rubro pasajero es mayor la influencia de la mujer mientras que en el rubro peatón, el hombre supera a la mujer."}
+
+Datos %>%
+  filter(!is.na(Sexo)) %>%
+  group_by(`Rol`,Sexo) %>%
+  summarise(cant =n()) %>%
+  ggplot(aes(x = `Rol`, y = cant, fill = Sexo)) +
+    geom_bar(stat="identity", position = "dodge") +
+    scale_fill_brewer(palette = "Set1") +
+    labs(y = "Cantidad", 
+         title = "Cantidad de accidentes según el rol de la persona",
+         subtitle = "Diferenciado por sexo")
+
+```
+
 
