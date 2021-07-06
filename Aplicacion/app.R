@@ -5,6 +5,7 @@ library(here)
 library(lubridate)
 library(rgdal)
 library(xtable)
+library(DT)
 
 Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
 
@@ -12,6 +13,7 @@ datostime <- Datos %>%
     mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
     mutate(Ano = year(Fecha_y_hora)) %>% 
     mutate(Mes = month(Fecha_y_hora))
+
 
 mapaine <- readOGR(here("ine_depto.shp"))
 
@@ -40,23 +42,25 @@ ui <- fluidPage(
     titlePanel("Trabajo grupal"),
     sidebarLayout(
         sidebarPanel(
+            selectInput("anios", "Año en gráfico de lineas y puntos", c(2013, 2014, 2015, 2016, 2017, 2018, 2019)),
             selectInput('year', 'Año en mapa departamental',
                         c("2013", "2014", "2015","2016",
                           "2017","2018","2019") ),
+            selectInput("digitos", "Digitos", c(1, 2, 3)),
             selectInput('variable', 'Variable en gráfico de barras',
-                        c("Rol", "Jurisdiccion", "Vehiculo" ) ),
-            selectInput("digitos", "Digitos", c(0, 1, 2))
+                        c("Rol", "Jurisdiccion", "Vehiculo" ) )
         ),
     mainPanel(
         tabsetPanel(
             tabPanel("Evolución temporal",
-                     h2("Gráfico...", align="center"),
+                     h2("Gráfico con la evolución temporal por mes de cada año", align="center"),
                      plotOutput("tiempo")),
             tabPanel("Mapa departamental",
-                     h2("Gráfico...", align="center"),
-                     plotOutput("mapa")),
-            tabPanel("Rol y Sexo",
-                     h2("Gráfico...", align="center"),
+                     h2("Mapa departamental con la cantidad de accidentes por departamento y año", align="center"),
+                     plotOutput("mapa"),
+                     DTOutput("tabla")),
+            tabPanel("Barras",
+                     h2("Comparación de distintas variables por sexo ", align="center"),
                      plotOutput("barras")) ) 
         ) ) )
 server <- function(input, output) {
@@ -79,9 +83,42 @@ server <- function(input, output) {
         ggplot(aes(x = .data[[input$variable]], y = cant, fill = Sexo)) +
         geom_bar(stat="identity", position = "dodge") +
         scale_fill_brewer(palette = "Set1") +
+        theme(axis.text.x = element_text(angle = 90)) +
         labs(y = "Cantidad", 
              title = "Cantidad de accidentes",
              subtitle = "Diferenciado por sexo")
+    })
+    tablas <- reactive({datatable(Datos %>%
+                                      group_by(Departamento) %>%
+                                      summarise(n=n()) %>%
+                                      mutate(prop = n/sum(n, na.rm = TRUE), across(where(is.numeric), ~ round(., as.numeric(input$digitos)))) %>%
+                                      rename(Cantidad = n, Proporción = prop))
+    })
+    output$tabla <- renderDataTable({
+            tablas()
+    })
+    grafico <- reactive({Datos %>% 
+                           mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
+                           mutate(Ano = year(Fecha_y_hora)) %>% 
+                           mutate(Mes = month(Fecha_y_hora)) %>% 
+                           group_by(Ano, Mes) %>% 
+                           summarise(cantidad = n()) %>% 
+                           filter(Ano == input$anios)
+   })
+   output$tiempo <- renderPlot({
+        ggplot(data = grafico(), aes(x = Mes, y = cantidad, colour = "Blue")) +
+            geom_line(size = 1) +
+            geom_point(size = 1.5) +
+            scale_color_brewer(palette = "Dark2", guide = "none") +
+            scale_x_discrete(limit = c(1:12),
+                             labels = c("Enero", "Febrero", "Marzo", "Abril",
+                                        "Mayo", "Junio", "Julio", "Agosto",
+                                        "Setiembre", "Octubre", "Noviembre",
+                                        "Diciembre")) +
+            theme(axis.text.x = element_text(angle = 90),
+                  text = element_text(size = 10)) +
+            labs(x = "Mes", y = "Cantidad", 
+                 title = paste("Evolución temporal de la cantidad de accidentes en el año", input$anios))
     })
 }
 
