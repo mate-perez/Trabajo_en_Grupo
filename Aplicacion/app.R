@@ -9,12 +9,6 @@ library(DT)
 
 Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
 
-datostime <- Datos %>% 
-    mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
-    mutate(Ano = year(Fecha_y_hora)) %>% 
-    mutate(Mes = month(Fecha_y_hora))
-
-
 mapaine <- readOGR(here("ine_depto.shp"))
 
 dframe_depto <- ggplot2::fortify(mapaine)
@@ -28,24 +22,17 @@ deptos <- dframe_depto %>%
                                `10`="ROCHA",`11`="SALTO", `12`="SAN JOSE",`13`="SORIANO",
                                `14`="TREINTA Y TRES", `16`="TACUAREMBO",`17`="FLORES",
                                `18`="MALDONADO"))
-
-
-tabla <- datostime %>%
-    group_by(Departamento,Ano) %>%
-    summarise(n=n()) %>%
-    mutate(prop = n/sum(n, na.rm = TRUE)) %>%
-    rename(Cantidad = n, Proporción = prop)
-
-mapauru <- left_join(deptos, tabla, by = "Departamento")
+datostime <- Datos %>%
+    mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
+    mutate(Ano = year(Fecha_y_hora)) %>% 
+    mutate(Mes = month(Fecha_y_hora))
 
 ui <- fluidPage(
     titlePanel("Trabajo grupal"),
     sidebarLayout(
         sidebarPanel(
-            selectInput("anios", "Año en gráfico de lineas y puntos", c(2013, 2014, 2015, 2016, 2017, 2018, 2019)),
-            selectInput('year', 'Año en mapa departamental',
-                        c("2013", "2014", "2015","2016",
-                          "2017","2018","2019") ),
+            selectInput("anios", "Año del gráfico ",
+                        c(2013, 2014, 2015, 2016, 2017, 2018, 2019)),
             selectInput("digitos", "Digitos", c(1, 2, 3)),
             selectInput('variable', 'Variable en gráfico de barras',
                         c("Rol", "Jurisdiccion", "Vehiculo" ) )
@@ -65,47 +52,16 @@ ui <- fluidPage(
         ) ) )
 server <- function(input, output) {
     
-    output$mapa <- renderPlot({ mapauru %>%
-            filter(Departamento!=15) %>%
-            filter(Ano %in% input$year) %>%
-            ggplot(aes(x = long, y = lat, group = group)) +
-            geom_polygon(aes(fill = Cantidad)) +
-            scale_fill_viridis_c() +
-            labs(x="Longitud", y="Latitud",
-                 fill="Cantidad de accidentes",
-                 title="Cantidad de accidentes por departamento")
-        
-    })
-    output$barras <- renderPlot({ Datos %>%
-        filter(!is.na(Sexo)) %>%
-        group_by(.data[[input$variable]],Sexo) %>%
-        summarise(cant =n()) %>%
-        ggplot(aes(x = .data[[input$variable]], y = cant, fill = Sexo)) +
-        geom_bar(stat="identity", position = "dodge") +
-        scale_fill_brewer(palette = "Set1") +
-        theme(axis.text.x = element_text(angle = 90)) +
-        labs(y = "Cantidad", 
-             title = "Cantidad de accidentes",
-             subtitle = "Diferenciado por sexo")
-    })
-    tablas <- reactive({datatable(Datos %>%
-                                      group_by(Departamento) %>%
-                                      summarise(n=n()) %>%
-                                      mutate(prop = n/sum(n, na.rm = TRUE), across(where(is.numeric), ~ round(., as.numeric(input$digitos)))) %>%
-                                      rename(Cantidad = n, Proporción = prop))
-    })
-    output$tabla <- renderDataTable({
-            tablas()
-    })
     grafico <- reactive({Datos %>% 
-                           mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
-                           mutate(Ano = year(Fecha_y_hora)) %>% 
-                           mutate(Mes = month(Fecha_y_hora)) %>% 
-                           group_by(Ano, Mes) %>% 
-                           summarise(cantidad = n()) %>% 
-                           filter(Ano == input$anios)
-   })
-   output$tiempo <- renderPlot({
+            mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
+            mutate(Ano = year(Fecha_y_hora)) %>% 
+            mutate(Mes = month(Fecha_y_hora)) %>% 
+            group_by(Ano, Mes) %>% 
+            summarise(cantidad = n()) %>% 
+            filter(Ano == input$anios)
+    })
+    
+    output$tiempo <- renderPlot({
         ggplot(data = grafico(), aes(x = Mes, y = cantidad, colour = "Blue")) +
             geom_line(size = 1) +
             geom_point(size = 1.5) +
@@ -120,6 +76,55 @@ server <- function(input, output) {
             labs(x = "Mes", y = "Cantidad", 
                  title = paste("Evolución temporal de la cantidad de accidentes en el año", input$anios))
     })
+    
+       tabla <- reactive({ datostime %>%
+        group_by(Departamento,Ano) %>%
+        summarise(n=n()) %>%
+        mutate(prop = n/sum(n, na.rm = TRUE)) %>%
+        rename(Cantidad = n, Proporción = prop) %>%
+        filter(Ano == input$anios)
+    })
+    mapauru <- reactive({left_join(deptos,
+                                   tabla(), by = "Departamento")
+    })
+    output$mapa <- renderPlot({ mapauru() %>%
+            filter(Departamento!=15) %>%
+            ggplot(aes(x = long, y = lat, group = group)) +
+            geom_polygon(aes(fill = Cantidad)) +
+            scale_fill_viridis_c() +
+            labs(x="Longitud", y="Latitud",
+                 fill="Cantidad de accidentes",
+                 title=paste("Cantidad de accidentes por departamento en el año",
+                 input$anios))
+        
+    })
+    
+    tablas <- reactive({datatable(datostime %>%
+                                      filter(Ano == input$anios) %>%
+                                      group_by(Departamento) %>%
+                                      summarise(n=n()) %>%
+                                      mutate(prop = n/sum(n, na.rm = TRUE),
+                                             across(where(is.numeric), ~ round(., as.numeric(input$digitos)))) %>%
+                                      rename(Cantidad = n, Proporción = prop))
+    })
+    output$tabla <- renderDataTable({
+        tablas()
+    })
+    
+    output$barras <- renderPlot({ datostime %>%
+        filter(!is.na(Sexo)) %>%
+        filter(Ano == input$anios) %>%
+        group_by(.data[[input$variable]],Sexo) %>%
+        summarise(cant =n()) %>%
+        ggplot(aes(x = .data[[input$variable]], y = cant, fill = Sexo)) +
+        geom_bar(stat="identity", position = "dodge") +
+        scale_fill_brewer(palette = "Set1") +
+        theme(axis.text.x = element_text(angle = 90)) +
+        labs(y = "Cantidad", 
+             title = paste("Cantidad de accidentes en el año", input$anios),
+             subtitle = "Diferenciado por sexo")
+    })
+    
 }
 
 shinyApp(ui = ui, server = server)
