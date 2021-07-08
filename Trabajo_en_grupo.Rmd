@@ -27,6 +27,8 @@ los datos bajo estudio, así como plantear y responder preguntas de interés que
 parte del problema a resolver, este estudio se hará mediante la elaboración de gráficos 
 y resúmenes sobre las variables relevantes que componen la base de información así 
 como también el planteo de una aplicación web en shiny.
+
+Un accidente de transito es un suceso imprevisto que implica una colosion o algun tipo de impacto de al menos un vehiculo en movimiento en la via publica, y que genera consecuencias ya sean materiales o fisicas. Es un suceso evitable. Lamentablemente es un evento que ocurre diariamente, en todos los paises y que involucra a toda la poblacion, por lo que nos parecio interesante para tomarlo como objeto de estudio. 
 La primer pregunta que nos surgió cuando pensamos en accidentes de tránsito fue, 
 ¿Qué tan graves o leves fueron estos accidentes? para ver si hay muchos accidentes 
 en los que se llego al fallecimiento de alguna persona, o en general son heridas leves,
@@ -145,7 +147,7 @@ load(here("Datos/personas_13_21.RData"))
 
 ## ¿La cantidad de accidentes de tránsito aumenta en algún período específico a lo largo de los años?
  
-```{r temporal, echo = FALSE, fig.cap="Lo que se observa en el gráfico es que no hay relación entre la cantidad de accidentes y los años. En todos los años hay una gran variación de accidentes, donde aparecen picos altos y bajos en los distintos meses del año. La cantidad de accidentes es irregular durante un mismo año." }
+```{r temporal, echo = FALSE, fig.cap= "Lo que podemos observar en grafico es que la cantidad de accidentes ha tenido una leve disminucion entre el 2013 y el 2016. A partir de ese año, los accidentes se mantienen un rango similar hasta el 2020. Eventualmente la cantidad de accidentes bajo notoriamente en el 2020, precisamente en Marzo debido a la pandemia, pero sobre fin de año la cantidad volvio a la tendencia que se manifiesta en los años anteriores." }
 
 f <- personas_13_21 %>% 
   mutate(Fecha = dmy(Fecha)) %>% 
@@ -313,7 +315,7 @@ personas_13_21 <- personas_13_21 %>%
 ```
 
 
-```{r}
+```{r,fig.cap= "La conclusion del grafico es que los autos y las motos son los vehiculos que generan mayor cantidad de accidentes. Era una conclusion logica ya que son los vehiculos mas utilizados, pero lo que expone el grafico es la gran diferencia que hay contra los otros medios de transporte. Corresponde mencionar la disminucion que se genera en 2020 debido a la pandemia. "}
 ggplot(data = personas_13_21, aes(x = mes_año,
                                   color = `Tipo de Vehiculo`)) +
   geom_line(stat = "count", size = 1)+
