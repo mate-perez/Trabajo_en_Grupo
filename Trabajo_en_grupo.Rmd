@@ -22,9 +22,8 @@ Este estudio se hará mediante la elaboración de gráficos y resúmenes sobre l
 
 ## Conjunto de datos
 
-Esta análisis se va a basar en datos referentes a personas fallecidas en siniestros de tránsito en nuestro país, entre los años 2013 a 2019, extraídos del catálogo de datos de Uruguay (https://catalogodatos.gub.uy/dataset/unasev-fallecidos_siniestros_transito).
-Juntamos los datos de cada año para así poder realizar alguna pregunta temporal y ver si con el paso del tiempo existe algún cambio notorio.
-Los datos con los que trabajaremos tienen 3477 observaciones y 14 variables, entre las cuales tenemos discretas, continuas y categóricas.
+Esta análisis se va a basar en datos referentes a personas involucradas en accidentes de tránsito en nuestro país, entre los años 2013 a 2021, extraídos del portal geográfico de la UNASEV (https://aplicacionesunasev.presidencia.gub.uy/mapas/). Debido a la restricción de 50.000 observaciones por planilla descargada es que se generan planillas individuales, separando Montevideo y los 18 departamentos restantes para cada año de estudio.    
+Los datos con los que trabajaremos consisten de 496957 observaciones y 18 variables, entre las cuales tenemos discretas, continuas y categóricas.
 
 ## Preguntas:
 
@@ -39,9 +38,87 @@ library(here)
 library(lubridate)
 library(rgdal)
 library(xtable)
+library(viridis)
 
 Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
 ```
+
+```{r, eval=FALSE}
+personas_mdeo_2013 <- read_csv(here("Datos/personas_mdeo_2013.txt"))
+personas_dptos_2013 <- read_csv(here("Datos/personas_dptos_2013.txt"))
+personas_2013 <- rbind(personas_mdeo_2013, personas_dptos_2013)
+```
+
+```{r, eval=FALSE}
+personas_mdeo_2014 <- read_csv(here("Datos/personas_mdeo_2014.txt"))
+personas_dptos_2014 <- read_csv(here("Datos/personas_dptos_2014.txt"))
+personas_2014 <- rbind(personas_mdeo_2014, personas_dptos_2014)
+```
+
+
+```{r, eval=FALSE}
+personas_mdeo_2015 <- read_csv(here("Datos/personas_mdeo_2015.txt"))
+personas_dptos_2015 <- read_csv(here("Datos/personas_dptos_2015.txt"))
+personas_2015 <- rbind(personas_mdeo_2015, personas_dptos_2015)
+```
+
+```{r, eval=FALSE}
+personas_mdeo_2016 <- read_csv(here("Datos/personas_mdeo_2016.txt"))
+personas_dptos_2016 <- read_csv(here("Datos/personas_dptos_2016.txt"))
+personas_2016 <- rbind(personas_mdeo_2016, personas_dptos_2016)
+```
+
+```{r, eval=FALSE}
+personas_mdeo_2017 <- read_csv(here("Datos/personas_mdeo_2017.txt"))
+personas_dptos_2017 <- read_csv(here("Datos/personas_dptos_2017.txt"))
+personas_2017 <- rbind(personas_mdeo_2017, personas_dptos_2017)
+```
+
+```{r, eval=FALSE}
+personas_mdeo_2018 <- read_csv(here("Datos/personas_mdeo_2018.txt"))
+personas_dptos_2018 <- read_csv(here("Datos/personas_dptos_2018.txt"))
+personas_2018 <- rbind(personas_mdeo_2018, personas_dptos_2018)
+```
+
+```{r, eval=FALSE}
+personas_mdeo_2019 <- read_csv(here("Datos/personas_mdeo_2019.txt"))
+personas_dptos_2019 <- read_csv(here("Datos/personas_dptos_2019.txt"))
+personas_2019 <- rbind(personas_mdeo_2019, personas_dptos_2019)
+```
+
+```{r, eval=FALSE}
+personas_mdeo_2020 <- read_csv(here("Datos/personas_mdeo_2020.txt"))
+personas_dptos_2020 <- read_csv(here("Datos/personas_dptos_2020.txt"))
+personas_2020 <- rbind(personas_mdeo_2020, personas_dptos_2020)
+```
+
+```{r, eval=FALSE}
+personas_2021 <- read_csv(here("Datos/personas_2021.txt"))
+```
+
+```{r, eval=FALSE}
+#datos de personas involucradas en accidentes de tránsito entre 01/01/2013 y 31/03/2021
+personas_13_21 <- rbind(personas_2013, personas_2014,
+                        personas_2015, personas_2016,
+                        personas_2017, personas_2018,
+                        personas_2019, personas_2020,
+                        personas_2021)
+```
+
+```{r, eval=FALSE}
+#Guardamos las planillas unidas como .RData y como .csv, de forma de facilitar la carga de datos y para usar en la aplicación.
+save(personas_13_21, file = "personas_13_21.RData")
+```
+
+```{r, eval=FALSE}
+#write.csv(personas_13_21, file = "personas_13_21.csv")
+#Este archivo ocupa 100MB
+```
+
+```{r}
+load(here("Datos/personas_13_21.RData"))
+```
+
 
 \newpage
 
@@ -49,17 +126,18 @@ Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
  
 ```{r temporal, echo = FALSE, fig.cap="Lo que se observa en el gráfico es que no hay relación entre la cantidad de accidentes y los años. En todos los años hay una gran variación de accidentes, donde aparecen picos altos y bajos en los distintos meses del año. La cantidad de accidentes es irregular durante un mismo año." }
 
-f <- Datos %>% 
-  mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
-  mutate(Ano = year(Fecha_y_hora)) %>% 
-  mutate(Mes = month(Fecha_y_hora)) %>% 
-  group_by(Ano, Mes) %>% 
+f <- personas_13_21 %>% 
+  mutate(Fecha = dmy(Fecha)) %>% 
+  mutate(Año = year(Fecha)) %>% 
+  mutate(Mes = month(Fecha)) %>% 
+  group_by(Año, Mes) %>% 
   summarise(cantidad = n())
 
-ggplot(data = f, aes(x = Mes, y = cantidad, colour = as.factor(Ano))) +
+ggplot(data = f, aes(x = Mes, y = cantidad, 
+                     colour = as.factor(Año))) +
   geom_line(size = 1) +
   geom_point(size = 1.5) +
-  facet_wrap( ~Ano) +
+  facet_wrap(~Año) +
   scale_color_brewer(palette = "Dark2", guide = "none") +
   scale_x_discrete(limit = c(1:12),
                    labels = c("Enero", "Febrero", "Marzo", "Abril",
@@ -77,28 +155,6 @@ ggplot(data = f, aes(x = Mes, y = cantidad, colour = as.factor(Ano))) +
 
 Nuevos datos para ver si el descenso en la movilidad debido a la pandemia disminuyó el número de fallecidos por accidentes de tránsito.
 
-```{r}
-#Datos por accidentes
-Montevideo2020 <- read_csv(here("Datos/Montevideo2020.txt"))
-Dptos2020 <- read.csv(here("Datos/Dptos2020.txt"))
-Montevideo2021 <- read_csv(here("Datos/Montevideo2021.txt"))
-Dptos2021 <- read.csv(here("Datos/Dptos2021.txt"))
-```
-
-```{r}
-names(Montevideo2020) <- names(Dptos2020)
-names(Montevideo2021) <- names(Dptos2021)
-
-datos_20_21 <- rbind(Montevideo2020, Dptos2020,
-                     Montevideo2021, Dptos2021)
-```
-
-```{r}
-personas_mdeo_2020 <- read_csv(here("Datos/personas_mdeo_2020.txt"))
-personas_dptos_2020 <- read_csv(here("Datos/personas_dptos_2020.txt"))
-
-personas_2020 <- rbind(personas_mdeo_2020, personas_dptos_2020)
-```
 
 ```{r}
 #Nos quedamos con aquellas observaciones que tienen como Tipo de resultado a FALLECIDO EN CENTRO DE ASISTENCIA o FALLECIDO EN EL LUGAR
@@ -119,15 +175,26 @@ f_total$mes_año <- my(paste(f_total$Mes, f_total$Ano, sep = "-"))
 ```
 
 
+```{r}
+#Nos quedamos con aquellas observaciones que tienen como Tipo de resultado a FALLECIDO EN CENTRO DE ASISTENCIA o FALLECIDO EN EL LUGAR
+fallecidos_20_21 <-  personas_20_21[grepl("FALLECIDO+", personas_20_21$`Tipo de resultado`), ]
+```
+
+```{r}
+f$mes_año <- my(paste(f$Mes, f$Año, sep = "-"))
+```
+
+
 ```{r,fig.cap="Podemos apreciar que alrededor de marzo de 2020, momento en el cual empezó la pandemia, la cantidad de accidentes de tránsito tiene un gran descenso, debido probablemente a la disminución de movilidad antes mencionada."}
-ggplot(data = f_total, aes(x = mes_año, y = cantidad)) +
+ggplot(data = f, aes(x = mes_año, y = cantidad)) +
   geom_line(size = 1, color = "blue") +
-  geom_point(size = 1.5) +
+  geom_point(size = 1.5) + 
+  geom_smooth(method = 'lm', se = FALSE, color = "red") + 
   scale_color_brewer(palette = "Dark2", guide = "none") +
   theme(axis.text.x = element_text(angle = 90),
         text = element_text(size = 10)) +
   labs(x = "Fecha", y = "Cantidad", 
-       title = "Evolución temporal de la cantidad de accidentes") +
+       title = "Evolución temporal de la cantidad de fallecidos en accidentes de tránsito. Uruguay 2013-2021") +
   theme_bw()
 ```
 
@@ -156,7 +223,7 @@ mutate(Departamento=recode(Departamento, `0` = "MONTEVIDEO",
 `18`="MALDONADO"))
 
 
-tabla <- Datos %>%
+tabla <- personas_13_21 %>%
 group_by(Departamento) %>%
 summarise(n=n()) %>%
 mutate(prop = n/sum(n, na.rm = TRUE)) %>%
@@ -181,10 +248,11 @@ tabla %>% xtable() %>% print(include.rownames = FALSE)
 
 ## ¿Existe una correlación entre el rol que cumplía la persona fallecida y el sexo de la misma? 
 
-```{r, echo=FALSE, fig.cap= "La conclusión del gráfico es que la mayor cantidad de accidentes ocurren por causa del conductor. Dentro de este rol, notamos la amplia diferencia entre la cantidad de conductores hombres contra la cantidad de accidentes de conductoras mujeres. El hombre genera, aproximadamente, 8 veces más accidentes que lo que generan las mujeres. Con respecto a los otros roles, vemos que en el rubro pasajero es mayor la influencia de la mujer mientras que en el rubro peatón, el hombre supera a la mujer."}
+```{r, echo=FALSE, fig.cap= "La conclusión del gráfico es que la mayor cantidad de accidentes ocurren por causa del conductor. Dentro de este rol, notamos la amplia diferencia entre la cantidad de conductores hombres contra la cantidad de accidentes de conductoras mujeres. El hombre genera, aproximadamente, 8 veces más accidentes que lo que generan las mujeres. Con respecto a los otros roles, vemos que en el rubro pasajero es mayor la presencia de la mujer mientras que en el rubro peatón, el hombre supera a la mujer."}
 
-Datos %>%
-  filter(!is.na(Sexo)) %>%
+#Hay una observación que en rol dice 'Fallecidos'
+personas_13_21 %>%
+  filter(!is.na(Sexo) & Rol != "Fallecidos") %>%
   group_by(`Rol`,Sexo) %>%
   summarise(cant =n()) %>%
   ggplot(aes(x = `Rol`, y = cant, fill = Sexo)) +
@@ -196,4 +264,58 @@ Datos %>%
 
 ```
 
+## Total de accidentados
+
+
+
+```{r}
+personas_13_21 <- personas_13_21 %>% 
+  mutate(Fecha = dmy(Fecha)) %>% 
+  mutate(Año = year(Fecha)) %>% 
+  mutate(Mes = month(Fecha)) %>% 
+  mutate(mes_año = my(paste(Mes, Año, sep = "-" )))
+```
+
+
+```{r}
+
+#ESta gráfica es con todos los datos y queda un poco más clara la tendencia descendente que en el acumulado por mes
+
+# ggplot(data = personas_13_21, aes(x = mes_año)) +
+#   geom_line(stat = "count", size = 1, color = "blue") +
+#   #stat_count(geom = "line", size = 1, color = "blue") + 
+#   theme(axis.text.x = element_text(angle = 90),
+#         text = element_text(size = 10)) +
+#   labs(x = "Fecha", y = "Cantidad", 
+#        title = "Evolución temporal de la cantidad de personas involucradas en accidentes de tránsito. Uruguay 2013-2021") +
+#   theme_bw()
+```
+
+
+```{r}
+ggplot(data = personas_13_21, aes(x = mes_año,
+                                  color = `Tipo de Vehiculo`)) +
+  geom_line(stat = "count", size = 1)+
+  #stat_count(geom = "line", size = 1) +
+  scale_color_brewer(palette = "Dark2") +
+  theme(axis.text.x = element_text(angle = 90),
+        text = element_text(size = 10)) +
+  labs(x = "Fecha", y = "Cantidad", 
+       title = "Evolución temporal de la cantidad de accidentes de tránsito por tipo de vehículo. Uruguay 2013-2021") +
+  theme_bw()
+```
+
+
+```{r}
+personas_13_21 %>%
+  mutate(Resultado = if_else(grepl("FALLECIDO+", `Tipo de resultado`), "FALLECIDO", `Tipo de resultado`)) %>% 
+  filter(`Tipo de Vehiculo` != "MONOPATIN ELECTRICO") %>% 
+  ggplot(aes(Resultado, 
+                           fill = `Tipo de Vehiculo`)) +
+  geom_bar(position = "fill") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  scale_fill_viridis(discrete = T, option = "A") +
+  ylab("Porcentaje") +
+  theme_bw()
+```
 
