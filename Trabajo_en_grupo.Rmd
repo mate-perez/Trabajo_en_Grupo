@@ -16,20 +16,42 @@ knitr::opts_chunk$set(echo = FALSE, tidy.opts = list(width.cutoff = 50), tidy = 
 
 ## Introducción
 
-El presente documento contiene el resultado del trabajo final de Nuevas Tecnologías para el Análisis Estadístico de Datos cuyo objetivo es utilizar adecuadamente las herramientas computacionales aprendidas en clase para realizar el análisis exploratorio de unos datos de interés.  
-El análisis tendrá por objetivo obtener una descripción en términos estadísticos sobre los datos bajo estudio, así como plantear y responder preguntas de interés que formarán parte del problema a resolver.  
-Este estudio se hará mediante la elaboración de gráficos y resúmenes sobre las variables relevantes que componen la base de información así como también el planteo de una aplicación web en shiny.
+El presente documento contiene el resultado del trabajo final de Nuevas Tecnologías 
+para el Análisis Estadístico de Datos cuyo objetivo es utilizar adecuadamente las 
+herramientas computacionales aprendidas en clase para realizar el análisis exploratorio
+de unos datos de interés. Estos datos fueron seleccionados por los integrantes del
+grupo del portal geográfico de la UNASEV, son datos referentes a personas involucradas
+en accidentes de tránsito entre los años 2013 a 2021.
+El análisis tendrá por objetivo obtener una descripción en términos estadísticos sobre 
+los datos bajo estudio, así como plantear y responder preguntas de interés que formarán 
+parte del problema a resolver, este estudio se hará mediante la elaboración de gráficos 
+y resúmenes sobre las variables relevantes que componen la base de información así 
+como también el planteo de una aplicación web en shiny.
+La primer pregunta que nos surgió cuando pensamos en accidentes de tránsito fue, 
+¿Qué tan graves o leves fueron estos accidentes? para ver si hay muchos accidentes 
+en los que se llego al fallecimiento de alguna persona, o en general son heridas leves,
+claro que esto va a depender del vehiculo en el cual se encontraba el accidentado, 
+este puede ser auto, bicicleta o moto por dar algunos ejemplos.
+Otras pregunta que podría llevar a un buen análisis, que aparece hablando de 
+accidentes de tránsito podría estar ligada a los cambios en el tiempo. Ya que los datos
+contienen información desde 2013 hasta 2021 se podría hacer una serie temporal para ver
+si en el correr de los años hubo una tendencia a bajar la cantidad de accidentes, 
+o si por el contrario hoy en día hay más accidentes que hace unos años, también se podría
+analizar por vehículo.
+Por otro lado también estaría bueno analizar por departamento, ¿cuáles fueron los 
+departamentos que han sufrido mayores accidentes de tránsito, y cuáles fueron los que
+han sufrido menos?. Es evidente que se tendría que tener en cuenta el tema de la población,
+por lo que estaría bueno comparar la cantidad de accidentes cada 1000 habitantes por ejemplo.
+También se podria hacer una comparación entre algunas variables, por ejemplo el rol y el
+sexo de la persona involucrada en el accidente, ¿Hay mayor cantidad de hombres que, siendo
+conductores, están involucrados en accidentes que mujeres?
 
 ## Conjunto de datos
 
 Esta análisis se va a basar en datos referentes a personas involucradas en accidentes de tránsito en nuestro país, entre los años 2013 a 2021, extraídos del portal geográfico de la UNASEV (https://aplicacionesunasev.presidencia.gub.uy/mapas/). Debido a la restricción de 50.000 observaciones por planilla descargada es que se generan planillas individuales, separando Montevideo y los 18 departamentos restantes para cada año de estudio.    
 Los datos con los que trabajaremos consisten de 496957 observaciones y 18 variables, entre las cuales tenemos discretas, continuas y categóricas.
 
-## Preguntas:
 
-###   * ¿La cantidad de fallecidos en accidentes de tránsito aumenta en algún período específico a lo largo de los años?
-###   * En los años 2013 a 2019, ¿cuáles fueron los departamentos que han sufrido mayores accidentes de tránsito, y cuáles fueron los que han sufrido menos?
-###   * ¿Existe una correlación entre el rol que cumplía la persona fallecida y el sexo de la misma? 
 
 ```{r data, echo = FALSE}
 library(gapminder)
@@ -40,7 +62,6 @@ library(rgdal)
 library(xtable)
 library(viridis)
 
-Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
 ```
 
 ```{r, eval=FALSE}
@@ -122,7 +143,7 @@ load(here("Datos/personas_13_21.RData"))
 
 \newpage
 
-## ¿La cantidad de fallecidos en accidentes de tránsito aumenta en algún período específico a lo largo de los años?
+## ¿La cantidad de accidentes de tránsito aumenta en algún período específico a lo largo de los años?
  
 ```{r temporal, echo = FALSE, fig.cap="Lo que se observa en el gráfico es que no hay relación entre la cantidad de accidentes y los años. En todos los años hay una gran variación de accidentes, donde aparecen picos altos y bajos en los distintos meses del año. La cantidad de accidentes es irregular durante un mismo año." }
 
@@ -158,26 +179,26 @@ Nuevos datos para ver si el descenso en la movilidad debido a la pandemia dismin
 
 ```{r}
 #Nos quedamos con aquellas observaciones que tienen como Tipo de resultado a FALLECIDO EN CENTRO DE ASISTENCIA o FALLECIDO EN EL LUGAR
-fallecidos_2020 <-  personas_2020[grepl("FALLECIDO+", personas_2020$`Tipo de resultado`), ]
+#fallecidos_2020 <-  personas_2020[grepl("FALLECIDO+", personas_2020$`Tipo de resultado`), ]
 ```
 
 ```{r}
-f_2020 <- fallecidos_2020 %>% 
-  mutate(Fecha = dmy(Fecha)) %>% 
-  mutate(Ano = year(Fecha)) %>% 
-  mutate(Mes = month(Fecha)) %>% 
-  group_by(Ano, Mes) %>% 
-  summarise(cantidad = n())
+#f_2020 <- fallecidos_2020 %>% 
+#  mutate(Fecha = dmy(Fecha)) %>% 
+#  mutate(Ano = year(Fecha)) %>% 
+#  mutate(Mes = month(Fecha)) %>% 
+#  group_by(Ano, Mes) %>% 
+#  summarise(cantidad = n())
 
-f_total <- rbind(f, f_2020) 
+#f_total <- rbind(f, f_2020) 
 
-f_total$mes_año <- my(paste(f_total$Mes, f_total$Ano, sep = "-"))
+#f_total$mes_año <- my(paste(f_total$Mes, f_total$Ano, sep = "-"))
 ```
 
 
 ```{r}
 #Nos quedamos con aquellas observaciones que tienen como Tipo de resultado a FALLECIDO EN CENTRO DE ASISTENCIA o FALLECIDO EN EL LUGAR
-fallecidos_20_21 <-  personas_20_21[grepl("FALLECIDO+", personas_20_21$`Tipo de resultado`), ]
+#fallecidos_20_21 <-  personas_20_21[grepl("FALLECIDO+", personas_20_21$`Tipo de resultado`), ]
 ```
 
 ```{r}
