@@ -60,7 +60,6 @@ library(tidyverse)
 library(here)
 library(lubridate)
 library(rgdal)
-library(xtable)
 library(viridis)
 
 ```
@@ -233,6 +232,8 @@ Los datos referidos a la cantidad de habitantes por departamento fueron extraíd
 
 ```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Los departamentos con más accidentes son Montevideo y Canelones, con 915 y 686 accidentes respectivamente. Entre los dos departamentos, se acumula el 46 por ciento de accidentes del país. Análogamente, los departamentos con menos accidentes son Treinta y Tres con 44 accidentes, y Flores que acumula un total de 37." }
 
+pobdeptos <- read_csv(here("Datos/poblaciondeptos.csv"))
+
 mapaine <- readOGR(here("ine_depto.shp"),verbose = FALSE)
 
 dframe_depto <- ggplot2::fortify(mapaine)
@@ -247,16 +248,11 @@ mutate(Departamento=recode(Departamento, `0` = "MONTEVIDEO",
 `14`="TREINTA Y TRES", `16`="TACUAREMBO",`17`="FLORES",
 `18`="MALDONADO",`15`="ARTIGAS")) 
 
-
-poblacion<-c(73377,520173,84698,123203,57084,25050,67047,
-           58815,164298,1318755,113107,54765,103473,68088,
-           124861,108304,82594,90051,48134)
-           
 cantsiniestros <- personas_13_21 %>%
 group_by(Departamento) %>%
 summarise(Cantidad = n()) 
 
-habitantes <- cbind(cantsiniestros,poblacion)
+habitantes <- merge(cantsiniestros,pobdeptos)
 
 tabla<- habitantes %>%
   group_by(Departamento) %>%
