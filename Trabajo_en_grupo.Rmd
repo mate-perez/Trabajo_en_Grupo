@@ -21,7 +21,7 @@ para el Análisis Estadístico de Datos cuyo objetivo es utilizar adecuadamente 
 herramientas computacionales aprendidas en clase para realizar el análisis exploratorio
 de unos datos de interés. Estos datos fueron seleccionados, por los integrantes del
 grupo, del portal geográfico de la UNASEV, son datos referentes a personas involucradas
-en accidentes de tránsito entre los años 2013 a 2021.
+en accidentes de tránsito entre el año 2013 y Marzo de 2021.
 El análisis tendrá por objetivo obtener una descripción en términos estadísticos sobre 
 los datos bajo estudio, así como plantear y responder preguntas de interés que formarán 
 parte del problema a resolver, este estudio se hará mediante la elaboración de gráficos 
@@ -47,11 +47,12 @@ Luego consideramos hacer una comparación entre algunas variables, como pueden s
 sexo de la persona involucrada en el accidente, ¿Hay mayor cantidad de hombres que, siendo
 conductores, están involucrados en accidentes que mujeres?
 
+\newpage
+
 ## Conjunto de datos
 
-Este análisis se va a basar en datos referentes a personas involucradas en accidentes de tránsito en nuestro país, entre los años 2013 a 2021, extraídos del portal geográfico de la UNASEV (https://aplicacionesunasev.presidencia.gub.uy/mapas/). Debido a la restricción de 50.000 observaciones por planilla descargada es que se generan planillas individuales, separando Montevideo y los 18 departamentos restantes para cada año de estudio.    
+Este análisis se va a basar en datos referentes a personas involucradas en accidentes de tránsito en nuestro país, entre el año 2013 y Marzo de 2021, extraídos del portal geográfico de la UNASEV (https://aplicacionesunasev.presidencia.gub.uy/mapas/). Debido a la restricción de 50.000 observaciones por planilla descargada es que se generan planillas individuales, separando Montevideo y los 18 departamentos restantes para cada año de estudio.    
 Los datos con los que trabajaremos consisten de 496957 observaciones y 18 variables, entre las cuáles tenemos discretas, continuas y categóricas.
-
 
 
 ```{r data, echo = FALSE}
@@ -63,6 +64,56 @@ library(rgdal)
 library(viridis)
 
 ```
+
+
+\begin{table}[hbpt]
+	\centering
+	\caption{Variables en \label{tab:VAR} \textbf{personas_13_21.RData}}
+	\vspace{0.5cm}
+	\begin{tabular}{|l|l|}
+		\hline
+	\textbf{Variable} &  \textbf{Descripción}  \\
+\hline
+Fecha & Fecha en la que ocurrió el siniestro  \\
+\hline
+Edad & Edad de la persona accidentada  \\
+\hline
+Rol & El rol que tomó la persona en el siniestro \\
+\hline
+Calle & Calle donde sucedió el siniestro \\
+\hline
+Zona & Zona donde sucedió el siniestro  \\
+\hline
+Tipo de resultado & Estado de salud de la persona accidentada \\
+\hline
+Tipo de siniestro & Tipo del accidente  \\
+\hline
+Usa cinturón & Uso de cinturón de la persona accidentada  \\
+\hline
+Usa casco & Uso de casco de la persona accidentada  \\
+\hline
+Día de la semana & Día de la semana en que ocurrió el siniestro  \\
+\hline
+Sexo  & Sexo de la persona accidentada \\
+\hline
+Hora & Hora en la que sucedió el siniestro \\
+\hline
+Departamento  & Departamento en el que sucedió el siniestro \\
+\hline
+Localidad & Localidad en la que sucedió el siniestro \\
+\hline
+Tipo de Vehiculo & Vehiculo que conducía la persona accidentada \\
+\hline
+fixed & ??? \\
+\hline
+X & Coordenada X del sitio donde ocurrio el siniestro \\
+\hline
+Y & Coordenada Y del sitio donde ocurrio el siniestro \\
+\hline
+  \end{tabular}
+\end{table}
+
+En el Cuadro se presentan los metadatos con una breve describción de cada variable de el conjunto de datos.
 
 ```{r, eval=FALSE}
 personas_mdeo_2013 <- read_csv(here("Datos/personas_mdeo_2013.txt"))
@@ -145,7 +196,7 @@ load(here("Datos/personas_13_21.RData"))
 
 ## ¿La cantidad de accidentes de tránsito aumenta en algún período específico a lo largo de los años?
  
-```{r temporal, echo = FALSE, fig.cap= "Lo que podemos observar en grafico es que la cantidad de accidentes ha tenido una leve disminucion entre el 2013 y el 2016. A partir de ese año, los accidentes se mantienen un rango similar hasta el 2020. Eventualmente la cantidad de accidentes bajo notoriamente en el 2020, precisamente en Marzo debido a la pandemia, pero sobre fin de año la cantidad volvio a la tendencia que se manifiesta en los años anteriores." }
+```{r temporal, echo = FALSE, fig.cap= "Evolución temporal de la cantidad de accidentes. Lo que podemos observar en grafico es que la cantidad de accidentes ha tenido una leve disminucion entre el 2013 y el 2016. A partir de ese año, los accidentes se mantienen un rango similar hasta el 2020. Eventualmente la cantidad de accidentes bajo notoriamente en el 2020, precisamente en Marzo debido a la pandemia, pero sobre fin de año la cantidad volvio a la tendencia que se manifiesta en los años anteriores." }
 
 f <- personas_13_21 %>% 
   mutate(Fecha = dmy(Fecha)) %>% 
@@ -167,8 +218,7 @@ ggplot(data = f, aes(x = Mes, y = cantidad,
                               "Diciembre")) +
   theme(axis.text.x = element_text(angle = 90),
         text = element_text(size = 10)) +
-  labs(x = "Mes", y = "Cantidad", 
-       title = "Evolución temporal de la cantidad de accidentes")
+  labs(x = "Mes", y = "Cantidad")
 
 ```
 
@@ -206,7 +256,7 @@ f$mes_año <- my(paste(f$Mes, f$Año, sep = "-"))
 ```
 
 
-```{r,fig.cap="Podemos apreciar que alrededor de marzo de 2020, momento en el cual empezó la pandemia, la cantidad de accidentes de tránsito tiene un gran descenso, debido probablemente a la disminución de movilidad antes mencionada."}
+```{r,fig.cap="Evolución temporal de la cantidad de fallecidos en accidentes de tránsito. Uruguay 2013-2021. Podemos apreciar que alrededor de marzo de 2020, momento en el cual empezó la pandemia, la cantidad de accidentes de tránsito tiene un gran descenso, debido probablemente a la disminución de movilidad antes mencionada."}
 ggplot(data = f, aes(x = mes_año, y = cantidad)) +
   geom_line(size = 1, color = "blue") +
   geom_point(size = 1.5) + 
@@ -214,13 +264,52 @@ ggplot(data = f, aes(x = mes_año, y = cantidad)) +
   scale_color_brewer(palette = "Dark2", guide = "none") +
   theme(axis.text.x = element_text(angle = 90),
         text = element_text(size = 10)) +
-  labs(x = "Fecha", y = "Cantidad", 
-       title = "Evolución temporal de la cantidad de fallecidos en accidentes de tránsito. Uruguay 2013-2021") +
+  labs(x = "Fecha", y = "Cantidad") +
   theme_bw()
 ```
 
 
+\newpage
 
+## Total de accidentados
+
+
+```{r}
+personas_13_21 <- personas_13_21 %>% 
+  mutate(Fecha = dmy(Fecha)) %>% 
+  mutate(Año = year(Fecha)) %>% 
+  mutate(Mes = month(Fecha)) %>% 
+  mutate(mes_año = my(paste(Mes, Año, sep = "-" )))
+```
+
+
+```{r, fig.cap="Evolución temporal de la cantidad de personas involucradas en accidentes de tránsito. Uruguay 2013-2021"}
+
+#ESta gráfica es con todos los datos y queda un poco más clara la tendencia descendente que en el acumulado por mes
+
+ ggplot(data = personas_13_21, aes(x = mes_año)) +
+   geom_line(stat = "count", size = 1, color = "blue") +
+   stat_count(geom = "line", size = 1, color = "blue") + 
+   theme(axis.text.x = element_text(angle = 90),
+         text = element_text(size = 10)) +
+   labs(x = "Fecha", y = "Cantidad") +
+   theme_bw()
+```
+
+
+\newpage
+
+```{r,fig.cap= "Evolución temporal de la cantidad de accidentes de tránsito por tipo de vehículo. Uruguay 2013-2021. La conclusion del grafico es que los autos y las motos son los vehiculos que generan mayor cantidad de accidentes. Era una conclusion logica ya que son los vehiculos mas utilizados, pero lo que expone el grafico es la gran diferencia que hay contra los otros medios de transporte. Corresponde mencionar la disminucion que se genera en 2020 debido a la pandemia. "}
+ggplot(data = personas_13_21, aes(x = mes_año,
+                                  color = `Tipo de Vehiculo`)) +
+  geom_line(stat = "count", size = 1)+
+  #stat_count(geom = "line", size = 1) +
+  scale_color_brewer(palette = "Dark2") +
+  theme(axis.text.x = element_text(angle = 90),
+        text = element_text(size = 10)) +
+  labs(x = "Fecha", y = "Cantidad") +
+  theme_bw()
+```
 
 
 \newpage
@@ -230,7 +319,7 @@ ggplot(data = f, aes(x = mes_año, y = cantidad)) +
 
 Los datos referidos a la cantidad de habitantes por departamento fueron extraídos de https://otu.opp.gub.uy a partir del Censo de 2011 realizado por el Instituto Nacional de Estadística.
 
-```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Los departamentos con más accidentes son Montevideo y Canelones, con 915 y 686 accidentes respectivamente. Entre los dos departamentos, se acumula el 46 por ciento de accidentes del país. Análogamente, los departamentos con menos accidentes son Treinta y Tres con 44 accidentes, y Flores que acumula un total de 37." }
+```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Mapa con la cantidad de accidentes por departamento cada 1000 habitantes. Los departamentos con más accidentes son Montevideo y Canelones, con 915 y 686 accidentes respectivamente. Entre los dos departamentos, se acumula el 46 por ciento de accidentes del país. Análogamente, los departamentos con menos accidentes son Treinta y Tres con 44 accidentes, y Flores que acumula un total de 37." }
 
 pobdeptos <- read_csv(here("Datos/poblaciondeptos.csv"))
 
@@ -264,17 +353,16 @@ mapauru %>%
 ggplot(aes(x = long, y = lat, group = group)) +
 geom_polygon(aes(fill = canthabitantes)) +
   scale_fill_viridis_c() +
-  labs(x="Longitud", y="Latitud",fill="Cantidad de accidentes",
-       title="Cantidad de accidentes por departamento cada 1000
-       habitantes")
+  labs(x="Longitud", y="Latitud",fill="Cantidad de accidentes")
 
 ```
 
+
 \newpage
 
-## ¿Existe una correlación entre el rol que cumplía la persona fallecida y el sexo de la misma? 
+## ¿Existe una relación entre el rol que cumplía la persona fallecida y el sexo de la misma? 
 
-```{r, echo=FALSE, fig.cap= "La conclusión del gráfico es que la mayor cantidad de accidentes ocurren por causa del conductor. Dentro de este rol, notamos la amplia diferencia entre la cantidad de conductores hombres contra la cantidad de accidentes de conductoras mujeres. El hombre genera, aproximadamente, 8 veces más accidentes que lo que generan las mujeres. Con respecto a los otros roles, vemos que en el rubro pasajero es mayor la presencia de la mujer mientras que en el rubro peatón, el hombre supera a la mujer."}
+```{r, echo=FALSE, fig.cap= "Gráfico de barras con la cantidad de accidentes según el rol de la persona diferenciado por sexo. La conclusión del gráfico es que la mayor cantidad de accidentes ocurren por causa del conductor. Dentro de este rol, notamos la amplia diferencia entre la cantidad de conductores hombres contra la cantidad de accidentes de conductoras mujeres. El hombre genera, aproximadamente, 8 veces más accidentes que lo que generan las mujeres. Con respecto a los otros roles, vemos que en el rubro pasajero es mayor la presencia de la mujer mientras que en el rubro peatón, el hombre supera a la mujer."}
 
 #Hay una observación que en rol dice 'Fallecidos'
 personas_13_21 %>%
@@ -284,55 +372,16 @@ personas_13_21 %>%
   ggplot(aes(x = `Rol`, y = cant, fill = Sexo)) +
     geom_bar(stat="identity", position = "dodge") +
     scale_fill_brewer(palette = "Set1") +
-    labs(y = "Cantidad", 
-         title = "Cantidad de accidentes según el rol de la persona",
-         subtitle = "Diferenciado por sexo")
+    labs(y = "Cantidad")
 
 ```
 
-## Total de accidentados
 
+\newpage
 
+## ¿Qué tan graves o leves fueron los accidentes?, ¿Depende del vehículo en el que iba el accidentado?
 
-```{r}
-personas_13_21 <- personas_13_21 %>% 
-  mutate(Fecha = dmy(Fecha)) %>% 
-  mutate(Año = year(Fecha)) %>% 
-  mutate(Mes = month(Fecha)) %>% 
-  mutate(mes_año = my(paste(Mes, Año, sep = "-" )))
-```
-
-
-```{r}
-
-#ESta gráfica es con todos los datos y queda un poco más clara la tendencia descendente que en el acumulado por mes
-
- ggplot(data = personas_13_21, aes(x = mes_año)) +
-   geom_line(stat = "count", size = 1, color = "blue") +
-   stat_count(geom = "line", size = 1, color = "blue") + 
-   theme(axis.text.x = element_text(angle = 90),
-         text = element_text(size = 10)) +
-   labs(x = "Fecha", y = "Cantidad", 
-       title = "Evolución temporal de la cantidad de personas involucradas en accidentes de tránsito. Uruguay 2013-2021") +
-   theme_bw()
-```
-
-
-```{r,fig.cap= "La conclusion del grafico es que los autos y las motos son los vehiculos que generan mayor cantidad de accidentes. Era una conclusion logica ya que son los vehiculos mas utilizados, pero lo que expone el grafico es la gran diferencia que hay contra los otros medios de transporte. Corresponde mencionar la disminucion que se genera en 2020 debido a la pandemia. "}
-ggplot(data = personas_13_21, aes(x = mes_año,
-                                  color = `Tipo de Vehiculo`)) +
-  geom_line(stat = "count", size = 1)+
-  #stat_count(geom = "line", size = 1) +
-  scale_color_brewer(palette = "Dark2") +
-  theme(axis.text.x = element_text(angle = 90),
-        text = element_text(size = 10)) +
-  labs(x = "Fecha", y = "Cantidad", 
-       title = "Evolución temporal de la cantidad de accidentes de tránsito por tipo de vehículo. Uruguay 2013-2021") +
-  theme_bw()
-```
-
-
-```{r}
+```{r, fig.cap="Gráfico de barras apiladas al 100 por ciento del estado de salud de la persona involucrada en el accidente, separando por vehículo."}
 personas_13_21 %>%
   mutate(Resultado = if_else(grepl("FALLECIDO+", `Tipo de resultado`), "FALLECIDO", `Tipo de resultado`)) %>% 
   filter(`Tipo de Vehiculo` != "MONOPATIN ELECTRICO") %>% 
@@ -344,4 +393,5 @@ personas_13_21 %>%
   ylab("Porcentaje") +
   theme_bw()
 ```
+
 
