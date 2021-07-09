@@ -19,8 +19,8 @@ knitr::opts_chunk$set(echo = FALSE, tidy.opts = list(width.cutoff = 50), tidy = 
 El presente documento contiene el resultado del trabajo final de Nuevas Tecnologías 
 para el Análisis Estadístico de Datos cuyo objetivo es utilizar adecuadamente las 
 herramientas computacionales aprendidas en clase para realizar el análisis exploratorio
-de unos datos de interés. Estos datos fueron seleccionados por los integrantes del
-grupo del portal geográfico de la UNASEV, son datos referentes a personas involucradas
+de unos datos de interés. Estos datos fueron seleccionados, por los integrantes del
+grupo, del portal geográfico de la UNASEV, son datos referentes a personas involucradas
 en accidentes de tránsito entre los años 2013 a 2021.
 El análisis tendrá por objetivo obtener una descripción en términos estadísticos sobre 
 los datos bajo estudio, así como plantear y responder preguntas de interés que formarán 
@@ -28,30 +28,29 @@ parte del problema a resolver, este estudio se hará mediante la elaboración de
 y resúmenes sobre las variables relevantes que componen la base de información así 
 como también el planteo de una aplicación web en shiny.
 
-Un accidente de transito es un suceso imprevisto que implica una colosion o algun tipo de impacto de al menos un vehiculo en movimiento en la via publica, y que genera consecuencias ya sean materiales o fisicas. Es un suceso evitable. Lamentablemente es un evento que ocurre diariamente, en todos los paises y que involucra a toda la poblacion, por lo que nos parecio interesante para tomarlo como objeto de estudio. 
+Un accidente de tránsito es un suceso imprevisto que implica una colisión o algún tipo de impacto de al menos un vehículo en movimiento en la vía pública, y que genera consecuencias ya sean materiales o físicas. Es un suceso evitable. Lamentablemente es un evento que ocurre diariamente, en todos los países y que involucra a toda la población, por lo que nos pareció interesante para tomarlo como objeto de estudio. 
 La primer pregunta que nos surgió cuando pensamos en accidentes de tránsito fue, 
 ¿Qué tan graves o leves fueron estos accidentes? para ver si hay muchos accidentes 
 en los que se llego al fallecimiento de alguna persona, o en general son heridas leves,
-claro que esto va a depender del vehiculo en el cual se encontraba el accidentado, 
-este puede ser auto, bicicleta o moto por dar algunos ejemplos.
-Otras pregunta que podría llevar a un buen análisis, que aparece hablando de 
+Esto va a depender de distintos factores, entre los cuáles consideramos de mayor relevancia el vehículo en el cual se encontraba el accidentado, 
+este puede ser auto, bicicleta o moto, entre otros.
+Otra pregunta que nos planteamos, es si la cantidad de 
 accidentes de tránsito podría estar ligada a los cambios en el tiempo. Ya que los datos
-contienen información desde 2013 hasta 2021 se podría hacer una serie temporal para ver
+contienen información desde 2013 hasta 2021 realizamos una serie temporal para ver
 si en el correr de los años hubo una tendencia a bajar la cantidad de accidentes, 
-o si por el contrario hoy en día hay más accidentes que hace unos años, también se podría
-analizar por vehículo.
-Por otro lado también estaría bueno analizar por departamento, ¿cuáles fueron los 
+o si por el contrario hoy en día hay más accidentes que hace unos años.
+Por otro lado, consideramos realizar un análisis por departamento, ¿cuáles fueron los 
 departamentos que han sufrido mayores accidentes de tránsito, y cuáles fueron los que
 han sufrido menos?. Es evidente que se tendría que tener en cuenta el tema de la población,
 por lo que estaría bueno comparar la cantidad de accidentes cada 1000 habitantes por ejemplo.
-También se podria hacer una comparación entre algunas variables, por ejemplo el rol y el
+Luego consideramos hacer una comparación entre algunas variables, como pueden ser el rol y el
 sexo de la persona involucrada en el accidente, ¿Hay mayor cantidad de hombres que, siendo
 conductores, están involucrados en accidentes que mujeres?
 
 ## Conjunto de datos
 
-Esta análisis se va a basar en datos referentes a personas involucradas en accidentes de tránsito en nuestro país, entre los años 2013 a 2021, extraídos del portal geográfico de la UNASEV (https://aplicacionesunasev.presidencia.gub.uy/mapas/). Debido a la restricción de 50.000 observaciones por planilla descargada es que se generan planillas individuales, separando Montevideo y los 18 departamentos restantes para cada año de estudio.    
-Los datos con los que trabajaremos consisten de 496957 observaciones y 18 variables, entre las cuales tenemos discretas, continuas y categóricas.
+Este análisis se va a basar en datos referentes a personas involucradas en accidentes de tránsito en nuestro país, entre los años 2013 a 2021, extraídos del portal geográfico de la UNASEV (https://aplicacionesunasev.presidencia.gub.uy/mapas/). Debido a la restricción de 50.000 observaciones por planilla descargada es que se generan planillas individuales, separando Montevideo y los 18 departamentos restantes para cada año de estudio.    
+Los datos con los que trabajaremos consisten de 496957 observaciones y 18 variables, entre las cuáles tenemos discretas, continuas y categóricas.
 
 
 
@@ -229,6 +228,9 @@ ggplot(data = f, aes(x = mes_año, y = cantidad)) +
 
 ## En los años 2013 a 2019, ¿cuáles fueron los departamentos que han sufrido mayores accidentes de tránsito, y cuáles fueron los que han sufrido menos?
 
+
+Los datos referidos a la cantidad de habitantes por departamento fueron extraídos de https://otu.opp.gub.uy a partir del Censo de 2011 realizado por el Instituto Nacional de Estadística.
+
 ```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Los departamentos con más accidentes son Montevideo y Canelones, con 915 y 686 accidentes respectivamente. Entre los dos departamentos, se acumula el 46 por ciento de accidentes del país. Análogamente, los departamentos con menos accidentes son Treinta y Tres con 44 accidentes, y Flores que acumula un total de 37." }
 
 mapaine <- readOGR(here("ine_depto.shp"),verbose = FALSE)
@@ -243,28 +245,33 @@ mutate(Departamento=recode(Departamento, `0` = "MONTEVIDEO",
 `3`="COLONIA",`4`="DURAZNO",`5`="FLORIDA",`6`="LAVALLEJA",
 `10`="ROCHA",`11`="SALTO", `12`="SAN JOSE",`13`="SORIANO",
 `14`="TREINTA Y TRES", `16`="TACUAREMBO",`17`="FLORES",
-`18`="MALDONADO"))
+`18`="MALDONADO",`15`="ARTIGAS")) 
 
 
-tabla <- personas_13_21 %>%
+poblacion<-c(73377,520173,84698,123203,57084,25050,67047,
+           58815,164298,1318755,113107,54765,103473,68088,
+           124861,108304,82594,90051,48134)
+           
+cantsiniestros <- personas_13_21 %>%
 group_by(Departamento) %>%
-summarise(n=n()) %>%
-mutate(prop = n/sum(n, na.rm = TRUE)) %>%
-rename(Cantidad = n, Proporción = prop)
+summarise(Cantidad = n()) 
+
+habitantes <- cbind(cantsiniestros,poblacion)
+
+tabla<- habitantes %>%
+  group_by(Departamento) %>%
+summarise(canthabitantes = (Cantidad/poblacion)*1000)
 
 mapauru <- left_join(deptos, tabla, by = "Departamento")
 
 mapauru %>%
-filter(Departamento!=15) %>%
 ggplot(aes(x = long, y = lat, group = group)) +
-geom_polygon(aes(fill = Cantidad)) +
+geom_polygon(aes(fill = canthabitantes)) +
   scale_fill_viridis_c() +
   labs(x="Longitud", y="Latitud",fill="Cantidad de accidentes",
-       title="Cantidad de accidentes por departamento")
+       title="Cantidad de accidentes por departamento cada 1000
+       habitantes")
 
-options(xtable.comment = FALSE)
-
-tabla %>% xtable() %>% print(include.rownames = FALSE)
 ```
 
 \newpage
@@ -304,14 +311,14 @@ personas_13_21 <- personas_13_21 %>%
 
 #ESta gráfica es con todos los datos y queda un poco más clara la tendencia descendente que en el acumulado por mes
 
-# ggplot(data = personas_13_21, aes(x = mes_año)) +
-#   geom_line(stat = "count", size = 1, color = "blue") +
-#   #stat_count(geom = "line", size = 1, color = "blue") + 
-#   theme(axis.text.x = element_text(angle = 90),
-#         text = element_text(size = 10)) +
-#   labs(x = "Fecha", y = "Cantidad", 
-#        title = "Evolución temporal de la cantidad de personas involucradas en accidentes de tránsito. Uruguay 2013-2021") +
-#   theme_bw()
+ ggplot(data = personas_13_21, aes(x = mes_año)) +
+   geom_line(stat = "count", size = 1, color = "blue") +
+   stat_count(geom = "line", size = 1, color = "blue") + 
+   theme(axis.text.x = element_text(angle = 90),
+         text = element_text(size = 10)) +
+   labs(x = "Fecha", y = "Cantidad", 
+       title = "Evolución temporal de la cantidad de personas involucradas en accidentes de tránsito. Uruguay 2013-2021") +
+   theme_bw()
 ```
 
 
