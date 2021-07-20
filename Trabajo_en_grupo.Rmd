@@ -41,8 +41,8 @@ si en el correr de los años hubo una tendencia a bajar la cantidad de accidente
 o si por el contrario hoy en día hay más accidentes que hace unos años.
 Por otro lado, consideramos realizar un análisis por departamento, ¿cuáles fueron los 
 departamentos que han sufrido mayores accidentes de tránsito, y cuáles fueron los que
-han sufrido menos?. Es evidente que se tendría que tener en cuenta el tema de la población,
-por lo que estaría bueno comparar la cantidad de accidentes cada 1000 habitantes por ejemplo.
+han sufrido menos?. Para esto se debería tener en cuenta a la población de cada uno de los departamentos,
+por lo que resolvimos ver la cantidad de accidentes cada 1000 habitantes.
 Luego consideramos hacer una comparación entre algunas variables, como pueden ser el rol y el
 sexo de la persona involucrada en el accidente, ¿Hay mayor cantidad de hombres que, siendo
 conductores, están involucrados en accidentes que mujeres?
@@ -287,7 +287,7 @@ ggplot(data = f, aes(x = Mes, y = cantidad,
 Una vez realizado el análisis global, se puede explorar cuáles son los vehículos que tienen mayor participación en accidentes de tránsito.  
 En el siguiente gráfico se observa que los autos y las motos son los vehículos más involucrados en accidentes en el período de estudio, esto está asociado a la composición del parque automotor del país.    
 
-Otra apreciación interesante a partir del gráfico es una mejora en la completitud de las bases de datos con el paso de los años, ya que disminuye la cantidad de observaciones sin dato.
+Otra apreciación interesante a partir del gráfico es una mejora en la completitud de las bases de datos con el paso de los años, ya que disminuye la cantidad de observaciones sin datos.
 
 ```{r}
 personas_13_21$Mes <- month(dmy(personas_13_21$Fecha))
@@ -319,7 +319,7 @@ ggplot(data = personas_13_21, aes(x = mes_año,
 
 ## Análisis por departamento
 
-A partir de los datos de la cantidad de habitantes por departamento extraídos de https://otu.opp.gub.uy a partir del Censo de 2011 realizado por el Instituto Nacional de Estadística, y con la información georeferencial del lugar del accidente, se puede analizar la cantidad de accidentes por departamento cada 1000 habitantes en el período 2013-2021.
+A partir de los datos de la cantidad de habitantes por departamento extraídos de https://otu.opp.gub.uy sobre el Censo de 2011 realizado por el Instituto Nacional de Estadística, y con la información georeferencial del lugar del accidente, se puede analizar la cantidad de accidentes por departamento cada 1000 habitantes en el período 2013-2021.
 
 ```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Distribución territorial de la cantidad de accidentes cada 1000 habitantes en el período 2013-2021." }
 
@@ -373,7 +373,7 @@ en el que se busca ver si es posible que el sexo de la persona influya en el rol
 
 #Hay una observación que en rol dice 'Fallecidos'
 personas_13_21 %>%
-  filter(!is.na(Sexo) & Rol != "Fallecidos") %>%
+  filter(Sexo!="SIN DATOS" & Rol != "Fallecidos") %>%
   group_by(`Rol`,Sexo) %>%
   summarise(cant =n()) %>%
   ggplot(aes(x = `Rol`, y = cant, fill = Sexo)) +
@@ -392,7 +392,7 @@ En el gráfico de barras se observa que el rol del conductor es el que predomina
 ## Gravedad del accidente según tipo de vehículo. 
 
 Profundizando en el análisis de los datos, se puede ver la relación entre tipo de vehículo y gravedad del accidente.   
-Del gráfico siguiente se observa que la gravedad de la lesión es mayor en las motos y en las bicicletas, la mayor proporción de personas que resultaron ilesas en un acccidente de tránsito viajaba en auto.
+Del gráfico siguiente se observa que la gravedad de la lesión es mayor en las motos y en las bicicletas, la mayor proporción de personas que resultaron ilesas en un accidente de tránsito viajaba en auto.
 
 ```{r, fig.cap="Gráfico de barras apiladas al cien por ciento con la distribución proporcional de la cantidad de personas accidentadas por tipo de vehículo según gravedad del accidente. Uruguay 2013-2021."}
 personas_13_21 %>%
