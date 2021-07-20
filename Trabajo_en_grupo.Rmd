@@ -303,8 +303,9 @@ personas_13_21$mes_año <- my(paste(personas_13_21$Mes, personas_13_21$Año, sep
 
 
 ```{r,fig.cap= "Evolución temporal de la cantidad de accidentes de tránsito por tipo de vehículo. Uruguay 2013-2021."}
-ggplot(data = personas_13_21, aes(x = mes_año,
-                                  color = `Tipo de Vehiculo`)) +
+personas_13_21 %>%
+ filter(`Tipo de Vehiculo` != "MONOPATIN ELECTRICO") %>%
+ggplot(aes(x = mes_año,color = `Tipo de Vehiculo`)) +
   geom_line(stat = "count", size = 1)+
   #stat_count(geom = "line", size = 1) +
   scale_color_brewer(palette = "Dark2") +
