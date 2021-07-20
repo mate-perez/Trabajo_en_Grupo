@@ -31,24 +31,30 @@ ui <- fluidPage(
     titlePanel("Trabajo grupal"),
     sidebarLayout(
         sidebarPanel(
-            selectInput("anios", "Año del gráfico ",
-                        c(2013, 2014, 2015, 2016, 2017, 2018, 2019)),
-            selectInput("digitos", "Digitos", c(1, 2, 3)),
-            selectInput('variable', 'Variable en gráfico de barras',
-                        c("Rol", "Jurisdiccion", "Vehiculo" ) )
+            conditionalPanel(condition = "input.paneles==1",
+                             selectInput("anios", "Año del gráfico ",
+                                         c(2013, 2014, 2015, 2016, 2017, 2018, 2019))
+            ),
+            conditionalPanel(condition = "input.paneles==2",
+                             selectInput("digitos", "Digitos", c(1, 2, 3))
+            ),
+            conditionalPanel(condition = "input.paneles==3",
+                             selectInput('variable', 'Variable en gráfico de barras',
+                                         c("Rol", "Jurisdiccion", "Vehiculo"))
+            )
         ),
-    mainPanel(
-        tabsetPanel(
-            tabPanel("Evolución temporal",
-                     h2("Gráfico con la evolución temporal por mes de cada año", align="center"),
-                     plotOutput("tiempo")),
-            tabPanel("Mapa departamental",
-                     h2("Mapa departamental con la cantidad de accidentes por departamento y año", align="center"),
-                     plotOutput("mapa"),
-                     DTOutput("tabla")),
-            tabPanel("Barras",
-                     h2("Comparación de distintas variables por sexo ", align="center"),
-                     plotOutput("barras")) ) 
+        mainPanel(
+            tabsetPanel(type = "tabs", id = "paneles", selected = 2,
+                        tabPanel("Evolución temporal",
+                                 h2("Gráfico con la evolución temporal por mes de cada año", align="center"),
+                                 plotOutput("tiempo"), value = 1),
+                        tabPanel("Mapa departamental",
+                                 h2("Mapa departamental con la cantidad de accidentes por departamento y año", align="center"),
+                                 plotOutput("mapa"),
+                                 DTOutput("tabla"), value = 2),
+                        tabPanel("Barras",
+                                 h2("Comparación de distintas variables por sexo ", align="center"),
+                                 plotOutput("barras"), value = 3)) 
         ) ) )
 server <- function(input, output) {
     
