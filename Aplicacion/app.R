@@ -52,7 +52,13 @@ ui <- fluidPage(
                                  DTOutput("tabla"), value = 2),
                         tabPanel("Gráfico de Barras",
                                  h2("Cantidad de accidentes según distintas variables ", align="center"),
-                                 plotOutput("barras"), value = 3)) 
+                                 plotOutput("barras"), value = 3),
+                        tabPanel("Gravedad del accidente",
+                                 h2("Cantidad de accidentes según la gravedad ", align="center"),
+                                 plotOutput("gravedad"), value = 1),
+                        tabPanel("Vehículos",
+                                 h2("Evolución temporal de accidentes según vehículo", align="center"),
+                                 plotOutput("vehiculo"), value = 1) ) 
         ) ) )
 server <- function(input, output) {
     
@@ -140,6 +146,38 @@ server <- function(input, output) {
              subtitle = "Diferenciado por sexo")
     })
     
+    output$gravedad <- renderPlot({datostime() %>%
+            filter(Ano==input$anios) %>%
+            mutate(Resultado = if_else(grepl("FALLECIDO+",`Tipo de resultado`),
+                                       "FALLECIDO", `Tipo de resultado`)) %>% 
+            filter(`Tipo de Vehiculo` != "MONOPATIN ELECTRICO") %>% 
+            ggplot(aes(Resultado, 
+                       fill = `Tipo de Vehiculo`)) +
+            geom_bar(position = "fill") +
+            scale_y_continuous(labels = scales::percent_format()) +
+            scale_fill_viridis(discrete = T, option = "A") +
+            ylab("Porcentaje") +
+            theme_bw()
+    })
+    
+    personas_13_21$Mes <- month(dmy(personas_13_21$Fecha))
+    personas_13_21$Ano <- year(dmy(personas_13_21$Fecha))
+    personas_13_21$mes_ano <- my(paste(personas_13_21$Mes,
+                                       personas_13_21$Ano, sep = "-"))
+   
+    output$vehiculo <- renderPlot({ personas_13_21 %>%
+            filter(`Tipo de Vehiculo` != "MONOPATIN ELECTRICO") %>% 
+            filter(Ano == input$anios) %>%
+   ggplot(aes(x = mes_ano, color = `Tipo de Vehiculo`)) +
+       geom_line(stat = "count", size = 1)+
+       #stat_count(geom = "line", size = 1) +
+       scale_color_brewer(palette = "Dark2") +
+       theme(axis.text.x = element_text(angle = 90),
+             text = element_text(size = 10)) +
+       labs(x = "Fecha", y = "Cantidad") +
+       theme_bw() +
+       theme(legend.position = "bottom")
+   })
 }
 
 shinyApp(ui = ui, server = server)
