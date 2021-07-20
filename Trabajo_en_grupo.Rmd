@@ -31,9 +31,9 @@ como también el planteo de una aplicación web en shiny.
 Un accidente de tránsito es un suceso imprevisto que implica una colisión o algún tipo de impacto de al menos un vehículo en movimiento en la vía pública, y que genera consecuencias ya sean materiales o físicas. Es un suceso evitable. Lamentablemente es un evento que ocurre diariamente, en todos los países y que involucra a toda la población, por lo que nos pareció interesante para tomarlo como objeto de estudio. 
 La primer pregunta que nos surgió cuando pensamos en accidentes de tránsito fue, 
 ¿Qué tan graves o leves fueron estos accidentes? para ver si hay muchos accidentes 
-en los que se llego al fallecimiento de alguna persona, o en general son heridas leves,
+en los que se llegó al fallecimiento de alguna persona, o en general son heridas leves.
 Esto va a depender de distintos factores, entre los cuáles consideramos de mayor relevancia el vehículo en el cual se encontraba el accidentado, 
-este puede ser auto, bicicleta o moto, entre otros.
+éste puede ser auto, bicicleta o moto, entre otros.
 Otra pregunta que nos planteamos, es si la cantidad de 
 accidentes de tránsito podría estar ligada a los cambios en el tiempo. Ya que los datos
 contienen información desde 2013 hasta 2021 realizamos una serie temporal para ver
@@ -100,14 +100,14 @@ Localidad & Localidad en la que sucedió el siniestro \\
 \hline
 Tipo de Vehiculo & Vehiculo que conducía la persona accidentada \\
 \hline
-X & Coordenada X del sitio donde ocurrio el siniestro \\
+X & Coordenada X del sitio donde ocurrió el siniestro \\
 \hline
-Y & Coordenada Y del sitio donde ocurrio el siniestro \\
+Y & Coordenada Y del sitio donde ocurrió el siniestro \\
 \hline
 \end{tabular}
 
 
-En el Cuadro se presentan los metadatos con una breve describción de cada variable de el conjunto de datos.
+En el cuadro se presentan los metadatos con una breve descripción de cada variable de el conjunto de datos.
 
 ```{r, eval=FALSE}
 personas_mdeo_2013 <- read_csv(here("Datos/personas_mdeo_2013.txt"))
@@ -257,7 +257,7 @@ ggplot(data = f, aes(x = mes_año, y = cantidad)) +
 
 Para observar con mayor claridad los años en estudio, se realiza un gráfico segmentado por año. En los años de 2016 a 2019, se aprecia una estabilidad intra-año con un aumento en el mes de diciembre, probablemente asociado a las fiestas de fin de año y al movimiento debido al comienzo de las vacaciones.
  
-```{r temporal, echo = FALSE, fig.cap= "Evolución temporal de la cantidad de accidentes. Se puede observar en el gráfico  que la cantidad de accidentes ha tenido una leve disminucion respecto al año 2013. A partir de ese año, los accidentes se mantienen un rango similar hasta el 2020." }
+```{r temporal, echo = FALSE, fig.cap= "Evolución temporal de la cantidad de accidentes. Se puede observar en el gráfico  que la cantidad de accidentes ha tenido una leve disminucion respecto al año 2013. A partir de ese año, los accidentes se mantienen en un rango similar hasta el 2020." }
 
 
 ggplot(data = f, aes(x = Mes, y = cantidad, 
@@ -319,9 +319,9 @@ ggplot(data = personas_13_21, aes(x = mes_año,
 
 ## Análisis por departamento
 
-A partir de los datos de la cantidad de habitantes por departamento extraídos de https://otu.opp.gub.uy a partir del Censo de 2011 realizado por el Instituto Nacional de Estadística, y con la información georeferencia del lugar del accidente, se puede analizar la cantidad de accidentes por departamento cada 1000 habitantes en el período 2013-2021.
+A partir de los datos de la cantidad de habitantes por departamento extraídos de https://otu.opp.gub.uy a partir del Censo de 2011 realizado por el Instituto Nacional de Estadística, y con la información georeferencial del lugar del accidente, se puede analizar la cantidad de accidentes por departamento cada 1000 habitantes en el período 2013-2021.
 
-```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Distribución territorial la cantidad de accidentes cada 1000 habitantes en el período 2013-2021." }
+```{r mapa, echo = FALSE,message=FALSE, results="asis", fig.cap= "Distribución territorial de la cantidad de accidentes cada 1000 habitantes en el período 2013-2021." }
 
 pobdeptos <- read_csv(here("Datos/poblaciondeptos.csv"))
 
@@ -363,7 +363,11 @@ El mapa muestra que Maldonado es el departamento con mayor cantidad de accidente
 
 \newpage
 
-## ¿Existe una relación entre el rol que cumplía la persona fallecida y el sexo de la misma? 
+## Relación entre el rol que cumplía la persona accidentada y el sexo de la misma
+
+Para continuar el análisis se hizo un gráfico de barras a partir de variables cualitativas
+en el que se busca ver si es posible que el sexo de la persona influya en el rol que
+ésta tuvo en el accidente.
 
 ```{r, echo=FALSE, fig.cap= "Distribución por sexo según rol de la persona en el accidente."}
 
@@ -390,7 +394,7 @@ En el gráfico de barras se observa que el rol del conductor es el que predomina
 Profundizando en el análisis de los datos, se puede ver la relación entre tipo de vehículo y gravedad del accidente.   
 Del gráfico siguiente se observa que la gravedad de la lesión es mayor en las motos y en las bicicletas, la mayor proporción de personas que resultaron ilesas en un acccidente de tránsito viajaba en auto.
 
-```{r, fig.cap="Distribución proporcional de la cantidad de personas accidentadas por tipo de vehículo según gravedad del accidente. Uruguay 2013-2021."}
+```{r, fig.cap="Gráfico de barras apiladas al cien por ciento con la distribución proporcional de la cantidad de personas accidentadas por tipo de vehículo según gravedad del accidente. Uruguay 2013-2021."}
 personas_13_21 %>%
   mutate(Resultado = if_else(grepl("FALLECIDO+", `Tipo de resultado`), "FALLECIDO", `Tipo de resultado`)) %>% 
   filter(`Tipo de Vehiculo` != "MONOPATIN ELECTRICO") %>% 
