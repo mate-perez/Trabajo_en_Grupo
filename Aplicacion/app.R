@@ -7,25 +7,14 @@ library(rgdal)
 library(xtable)
 library(DT)
 
-Datos <- read_csv(here("Accidentes_transito_2013a2019.csv"))
+load(here("Datos/personas_13_21.RData"))
+
+pobdeptos <- read_csv(here("Datos/poblaciondeptos.csv"))
 
 mapaine <- readOGR(here("ine_depto.shp"))
 
 dframe_depto <- ggplot2::fortify(mapaine)
 
-deptos <- dframe_depto %>%
-    rename(Departamento = id) %>%
-    mutate(Departamento=recode(Departamento, `0` = "MONTEVIDEO",
-                               `8` = "RIO NEGRO", `9` = "RIVERA",`7`="PAYSANDU",
-                               `1`="ARTIGAS",`2`="CANELONES",`19`="CERRO LARGO",
-                               `3`="COLONIA",`4`="DURAZNO",`5`="FLORIDA",`6`="LAVALLEJA",
-                               `10`="ROCHA",`11`="SALTO", `12`="SAN JOSE",`13`="SORIANO",
-                               `14`="TREINTA Y TRES", `16`="TACUAREMBO",`17`="FLORES",
-                               `18`="MALDONADO"))
-datostime <- Datos %>%
-    mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
-    mutate(Ano = year(Fecha_y_hora)) %>% 
-    mutate(Mes = month(Fecha_y_hora))
 
 ui <- fluidPage(
     titlePanel("Trabajo grupal"),
@@ -33,35 +22,46 @@ ui <- fluidPage(
         sidebarPanel(
             conditionalPanel(condition = "input.paneles==1",
                              selectInput("anios", "Año del gráfico ",
-                                         c(2013, 2014, 2015, 2016, 2017, 2018, 2019))
+                                         c(2013, 2014, 2015, 2016, 2017,
+                                           2018, 2019, 2020, 2021))
             ),
             conditionalPanel(condition = "input.paneles==2",
-                             selectInput("digitos", "Digitos", c(1, 2, 3))
+                             selectInput("anio", "Año del gráfico",
+                                         c(2013, 2014, 2015, 2016, 2017,
+                                           2018, 2019, 2020, 2021))
             ),
             conditionalPanel(condition = "input.paneles==3",
                              selectInput('variable', 'Variable en gráfico de barras',
-                                         c("Rol", "Jurisdiccion", "Vehiculo"))
+                                         c("Rol", "Zona", "Tipo de siniestro",
+                                           "Tipo de Vehiculo", "Usa cinturón", "Usa casco",
+                                           "Día de la semana")),
+                             selectInput("aniobarra","Año del gráfico",
+                                         c(2013, 2014, 2015, 2016, 2017,
+                                           2018, 2019, 2020, 2021))
             )
         ),
         mainPanel(
             tabsetPanel(type = "tabs", id = "paneles", selected = 2,
                         tabPanel("Evolución temporal",
-                                 h2("Gráfico con la evolución temporal por mes de cada año", align="center"),
+                                 h2("Gráfico con la evolución temporal de accidentes", align="center"),
                                  plotOutput("tiempo"), value = 1),
                         tabPanel("Mapa departamental",
-                                 h2("Mapa departamental con la cantidad de accidentes por departamento y año", align="center"),
+                                 h2("Accidentes según departamento cada 1000 habitantes",
+                                    align="center"),
                                  plotOutput("mapa"),
                                  DTOutput("tabla"), value = 2),
-                        tabPanel("Barras",
-                                 h2("Comparación de distintas variables por sexo ", align="center"),
+                        tabPanel("Gráfico de Barras",
+                                 h2("Cantidad de accidentes según distintas variables ", align="center"),
                                  plotOutput("barras"), value = 3)) 
         ) ) )
 server <- function(input, output) {
     
-    grafico <- reactive({Datos %>% 
-            mutate(Fecha_y_hora = dmy_hm(`Fecha y hora`)) %>% 
-            mutate(Ano = year(Fecha_y_hora)) %>% 
-            mutate(Mes = month(Fecha_y_hora)) %>% 
+    datostime <- reactive({personas_13_21 %>%
+            mutate(Fecha=parse_date_time(Fecha,order=c("dmy","ymd")))%>% 
+            mutate(Ano = year(Fecha)) %>% 
+            mutate(Mes = month(Fecha))
+    })
+    grafico <- reactive({ datostime()%>% 
             group_by(Ano, Mes) %>% 
             summarise(cantidad = n()) %>% 
             filter(Ano == input$anios)
@@ -80,46 +80,55 @@ server <- function(input, output) {
             theme(axis.text.x = element_text(angle = 90),
                   text = element_text(size = 10)) +
             labs(x = "Mes", y = "Cantidad", 
-                 title = paste("Evolución temporal de la cantidad de accidentes en el año", input$anios))
+                 title = paste("Cantidad de accidentes en el año", input$anios))
     })
     
-       tabla <- reactive({ datostime %>%
-        group_by(Departamento,Ano) %>%
-        summarise(n=n()) %>%
-        mutate(prop = n/sum(n, na.rm = TRUE)) %>%
-        rename(Cantidad = n, Proporción = prop) %>%
-        filter(Ano == input$anios)
+    deptos <-reactive({ dframe_depto %>%
+        rename(Departamento = id) %>%
+        mutate(Departamento=recode(Departamento, `0` = "MONTEVIDEO",
+                                   `8` = "RIO NEGRO", `9` = "RIVERA",`7`="PAYSANDU",
+                                   `1`="ARTIGAS",`2`="CANELONES",`19`="CERRO LARGO",
+                                   `3`="COLONIA",`4`="DURAZNO",`5`="FLORIDA",`6`="LAVALLEJA",
+                                   `10`="ROCHA",`11`="SALTO", `12`="SAN JOSE",`13`="SORIANO",
+                                   `14`="TREINTA Y TRES", `16`="TACUAREMBO",`17`="FLORES",
+                                   `18`="MALDONADO",`15`="ARTIGAS"))
     })
-    mapauru <- reactive({left_join(deptos,
+        datostime <- reactive({personas_13_21 %>%
+        mutate(Fecha=parse_date_time(Fecha,order=c("dmy","ymd")))%>% 
+        mutate(Ano = year(Fecha)) %>% 
+        mutate(Mes = month(Fecha))
+    })
+    cantsiniestros <- reactive({datostime() %>%
+        group_by(Departamento,Ano) %>%
+        summarise(Cantidad = n()) %>%
+        filter(Ano == input$anio)
+    })
+    habitantes <-reactive({merge(cantsiniestros(),pobdeptos)})
+    
+       tabla <- reactive({ habitantes() %>%
+               group_by(Departamento) %>%
+               summarise(canthabitantes =
+                             (Cantidad/poblacion)*1000)
+    })
+    mapauru <- reactive({left_join(deptos(),
                                    tabla(), by = "Departamento")
     })
     output$mapa <- renderPlot({ mapauru() %>%
-            filter(Departamento!=15) %>%
             ggplot(aes(x = long, y = lat, group = group)) +
-            geom_polygon(aes(fill = Cantidad)) +
+            geom_polygon(aes(fill = canthabitantes)) +
             scale_fill_viridis_c() +
             labs(x="Longitud", y="Latitud",
-                 fill="Cantidad de accidentes",
-                 title=paste("Cantidad de accidentes por departamento en el año",
-                 input$anios))
+                 fill="Cantidad de accidentes/1000 hab",
+                 title=paste("Cantidad de accidentes en el año",
+                 input$anio))
         
     })
     
-    tablas <- reactive({datatable(datostime %>%
-                                      filter(Ano == input$anios) %>%
-                                      group_by(Departamento) %>%
-                                      summarise(n=n()) %>%
-                                      mutate(prop = n/sum(n, na.rm = TRUE),
-                                             across(where(is.numeric), ~ round(., as.numeric(input$digitos)))) %>%
-                                      rename(Cantidad = n, Proporción = prop))
-    })
-    output$tabla <- renderDataTable({
-        tablas()
-    })
     
-    output$barras <- renderPlot({ datostime %>%
-        filter(!is.na(Sexo)) %>%
-        filter(Ano == input$anios) %>%
+    output$barras <- renderPlot({ datostime() %>%
+        filter(Sexo!="SIN DATOS") %>%
+        filter(Rol!="Fallecidos") %>%
+        filter(Ano == input$aniobarra) %>%
         group_by(.data[[input$variable]],Sexo) %>%
         summarise(cant =n()) %>%
         ggplot(aes(x = .data[[input$variable]], y = cant, fill = Sexo)) +
@@ -127,7 +136,7 @@ server <- function(input, output) {
         scale_fill_brewer(palette = "Set1") +
         theme(axis.text.x = element_text(angle = 90)) +
         labs(y = "Cantidad", 
-             title = paste("Cantidad de accidentes en el año", input$anios),
+             title = paste("Cantidad de accidentes en el año", input$aniobarra),
              subtitle = "Diferenciado por sexo")
     })
     
