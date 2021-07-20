@@ -29,23 +29,15 @@ y resúmenes sobre las variables relevantes que componen la base de información
 como también el planteo de una aplicación web en shiny.
 
 Un accidente de tránsito es un suceso imprevisto que implica una colisión o algún tipo de impacto de al menos un vehículo en movimiento en la vía pública, y que genera consecuencias ya sean materiales o físicas. Es un suceso evitable. Lamentablemente es un evento que ocurre diariamente, en todos los países y que involucra a toda la población, por lo que nos pareció interesante para tomarlo como objeto de estudio. 
-La primer pregunta que nos surgió cuando pensamos en accidentes de tránsito fue, 
-¿Qué tan graves o leves fueron estos accidentes? para ver si hay muchos accidentes 
-en los que se llegó al fallecimiento de alguna persona, o en general son heridas leves.
-Esto va a depender de distintos factores, entre los cuáles consideramos de mayor relevancia el vehículo en el cual se encontraba el accidentado, 
-éste puede ser auto, bicicleta o moto, entre otros.
-Otra pregunta que nos planteamos, es si la cantidad de 
-accidentes de tránsito podría estar ligada a los cambios en el tiempo. Ya que los datos
-contienen información desde 2013 hasta 2021 realizamos una serie temporal para ver
-si en el correr de los años hubo una tendencia a bajar la cantidad de accidentes, 
-o si por el contrario hoy en día hay más accidentes que hace unos años.
+
+La primer interrogante que surgió cuando pensamos en accidentes de tránsito fue la cantidad de accidentes que ocurrieron en nuestro período de estudio, con el propósito de visualizar si hay mejoras o no a medida que pasa el tiempo. Una vez analizado el período completo, decidimos analizar la cantidad de accidentes por año para comparar los mismos y ver las variaciones en las cantidades en un mismo año.
+Luego, nos planteamos estudiar sobre los vehículos que participan en los accidentes. La intención de esta pregunta es comparar la cantidad de accidentes que genera cada medio de transporte en los distintos años.
 Por otro lado, consideramos realizar un análisis por departamento, ¿cuáles fueron los 
 departamentos que han sufrido mayores accidentes de tránsito, y cuáles fueron los que
-han sufrido menos?. Para esto se debería tener en cuenta a la población de cada uno de los departamentos,
-por lo que resolvimos ver la cantidad de accidentes cada 1000 habitantes.
-Luego consideramos hacer una comparación entre algunas variables, como pueden ser el rol y el
-sexo de la persona involucrada en el accidente, ¿Hay mayor cantidad de hombres que, siendo
-conductores, están involucrados en accidentes que mujeres?
+han sufrido menos?. Para esto se tuvo en cuenta a la población de cada uno de los departamentos, por lo que resolvimos ver la cantidad de accidentes cada 1000 habitantes.
+Posteriormente, consideramos hacer una comparación entre algunas variables, como pueden ser el rol y el sexo de la persona involucrada en el accidente, ¿Hay mayor cantidad de hombres que, siendo conductores, están involucrados en accidentes que mujeres? ¿O ocurre lo contrario?
+Finalmente, para cerrar la investigación, decidimos realizar una nueva comparación, pero entre la gravedad del accidente y el tipo de vehiculo que participó en el mismo.
+
 
 \newpage
 
@@ -392,7 +384,7 @@ En el gráfico de barras se observa que el rol del conductor es el que predomina
 ## Gravedad del accidente según tipo de vehículo. 
 
 Profundizando en el análisis de los datos, se puede ver la relación entre tipo de vehículo y gravedad del accidente.   
-Del gráfico siguiente se observa que la gravedad de la lesión es mayor en las motos y en las bicicletas, la mayor proporción de personas que resultaron ilesas en un accidente de tránsito viajaba en auto.
+Del gráfico siguiente se observa que la gravedad de la lesión es mayor en las motos y en las bicicletas, la mayor proporción de personas que resultaron ilesas en un accidente de tránsito viajaba en auto. Y que la mayor proporción de fallecidos proviene de las motos.
 
 ```{r, fig.cap="Gráfico de barras apiladas al cien por ciento con la distribución proporcional de la cantidad de personas accidentadas por tipo de vehículo según gravedad del accidente. Uruguay 2013-2021."}
 personas_13_21 %>%
@@ -408,3 +400,13 @@ personas_13_21 %>%
 ```
 
 
+## Comentarios finales
+
+Las conluciones una vez finalizado la investigación son las siguientes.
+Primero es que la cantidad de accidentes ha tenido una leve disminución con respecto al año 2013. A partir de ese año, los accidentes se mantienen en un rango similar hasta el 2020, año en que comenzo la pandemia. Como era de esperarse, en dicho año, mas precisamente en los meses de marzo, abril, mayo y junio, la cantidad de accidentes descendió notoriamente a causa de la poca circulación de la población. Lo principal a destaar es la baja en la cantidad de accidentes.
+La segunda conlución, es que en diciembre siempre aumentan los accidentes. Esto lo asociamos al comienzo de vacaciones y las fiestas de fin de año.
+Otro deduccion que confirmamos, ya que en lo previo era lo que se esperaba, es que los autos y las motos son los vehiculos con mayor participacion de accidentes. Esto lo vinculamos con la composicion del parque automotor del pais.
+Con respecto al analisis por departamento, vemos que Maldonado es el de mayor cantidad de accidentes cada 1000 habitantes. Como observamos anteriormente, en diciembre de cada año aumentan los accidentes debido a la mayor movilidad como consecuencia de las fiestas y las vacaciones. Maldonado es uno de los lugares más turísticos del país, por lo que recibe muchas personas. Concluimos que esa es una de las principales razones por la cual Maldonado es el departamento con mayor cantidad de accidentes cada 1000 habitantes.
+Gracias a la comparación entre las variables sexo y rol de la persona accidentada
+hallamos que los conductores accidentados son mayoritariamente de sexo masculino.
+Para finalizar, gracias a la comparacion entre el vehiculo y la gravedad del accidente, deducimos que los autos y las motos son los transportes que generan más fallecidos. Y que en los accidentes sin heridos, los autos son los que tienen mayor porcentaje. Podemos afirmar que el auto es mas seguro que las motos.
