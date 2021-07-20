@@ -408,4 +408,31 @@ personas_13_21 %>%
   theme_bw()
 ```
 
+\newpage
+
+## Comentarios finales
+
+Surgieron varios hallazgos una vez finalizado el análisis de estos datos,
+el principal de ellos, nos parece fue que la cantidad de accidentes ha tenido
+una leve disminucion respecto al año 2013. A partir de ese año, 
+los accidentes se mantienen en un rango similar hasta el 2020, que como era de
+esperarse previo a comenzar el análisis, en los meses de marzo, abril, mayo y
+junio en los que la cantidad de accidentes decae más que notoriamente debido 
+a la disminución de ciculación como consecuencia del comienzo de la pandemia.
+Se observa una leve tendencia a la baja en el período analizado. 
+También hallamos que en diciembre de todos los años de los que disponíamos 
+datos suele haber una mayor cantidad de acidentes que en el resto del año,
+lo que asociamos al comienzo de vacaciones y las fiestas de fin de año.
+Otro hallazgo fue que los vehículos que tienen mayor participación en 
+accidentes de tránsito son los autos y las motos, lo que asociamos con
+la composición del parque automotor del país.  
+Por otra parte, gracias al análisis por departamento, podemos concluir que,
+si contamos accidentes cada 1000 habitantes, Maldonado es el departamento con
+mayor cantidad de accidentes.
+Gracias a la comparación entre las variables sexo y rol de la persona accidentada
+hallamos que los conductores accidentados son mayoritariamente de sexo masculino.
+Y por último viendo la gravedad del accidente dependiendo el tipo de vehículo,
+observamos que los vehículos involucrados en accidentes con mayor gravedad de
+la lesión son las motos y bicicletas.
+
 
