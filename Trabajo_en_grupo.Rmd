@@ -413,9 +413,6 @@ Se observa una leve tendencia a la baja en el período analizado.
 También hallamos que en diciembre de todos los años de los que disponíamos 
 datos suele haber una mayor cantidad de accidentes que en el resto del año,
 asociamos este aumento de la movilidad al comienzo de vacaciones y las fiestas de fin de año.
-Otro hallazgo fue que los vehículos que tienen mayor participación en 
-accidentes de tránsito son los autos y las motos, abarcando aproximadamente el 81% de los accidentes totales,lo que asociamos con la composición del parque automotor del país. 
-A su vez, la moto es el vehículo con mayor proporción de accidentes en los que la persona resultó herida o fallece. Mientras que la mayoría de accidentes donde el individuo salió ileso ocurrieron en auto. Podemos afirmar que el auto es más seguro que las motos.
 Por otra parte, gracias al análisis por departamento, podemos concluir que,
 si observamos cuantos accidentes sucedieron cada 1000 habitantes, Maldonado es el departamento con la
 mayor cantidad de accidentes.Creemos que una de las principales razones por las que sucede esto es que este departamento es uno de los lugares más turísticos del país, por lo que recibe muchas personas anualmente, sobretodo en verano.
