@@ -84,7 +84,7 @@ server <- function(input, output) {
                                         "Setiembre", "Octubre", "Noviembre",
                                         "Diciembre")) +
             theme(axis.text.x = element_text(angle = 90),
-                  text = element_text(size = 10)) +
+                  text = element_text(size = 14)) +
             labs(x = "Mes", y = "Cantidad", 
                  title = paste("Cantidad de accidentes en el año", input$anios))
     })
@@ -126,7 +126,10 @@ server <- function(input, output) {
             labs(x="Longitud", y="Latitud",
                  fill="Cantidad de accidentes/1000 hab",
                  title=paste("Cantidad de accidentes en el año",
-                 input$anio))
+                 input$anio)) +
+            theme(aspect.ratio = 1,
+                  text=element_text(size=14))
+        
         
     })
     
@@ -140,7 +143,8 @@ server <- function(input, output) {
         ggplot(aes(x = .data[[input$variable]], y = cant, fill = Sexo)) +
         geom_bar(stat="identity", position = "dodge") +
         scale_fill_brewer(palette = "Set1") +
-        theme(axis.text.x = element_text(angle = 90)) +
+        theme(axis.text.x = element_text(angle = 90),
+              text=element_text(size=14)) +
         labs(y = "Cantidad", 
              title = paste("Cantidad de accidentes en el año", input$aniobarra),
              subtitle = "Diferenciado por sexo")
@@ -157,7 +161,8 @@ server <- function(input, output) {
             scale_y_continuous(labels = scales::percent_format()) +
             scale_fill_viridis(discrete = T, option = "A") +
             ylab("Porcentaje") +
-            theme_bw()
+            theme_bw() + 
+            theme(text=element_text(size=14))
     })
     
     personas_13_21$Mes <- month(dmy(personas_13_21$Fecha))
@@ -176,7 +181,8 @@ server <- function(input, output) {
              text = element_text(size = 10)) +
        labs(x = "Fecha", y = "Cantidad") +
        theme_bw() +
-       theme(legend.position = "bottom")
+       theme(legend.position = "bottom",
+             text=element_text(size=14))
    })
 }
 
