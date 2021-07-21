@@ -6,6 +6,7 @@ library(lubridate)
 library(rgdal)
 library(xtable)
 library(DT)
+library(viridis)
 
 load(here("Datos/personas_13_21.RData"))
 
