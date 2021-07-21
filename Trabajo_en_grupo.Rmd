@@ -377,7 +377,7 @@ personas_13_21 %>%
 
 ```
 
-En el gráfico de barras se observa que el rol del conductor es el que predomina, esto es el resultado esperado, todos los vehículos llevan conductor y no necesariamente pasajeros. Si se analiza según sexo, los conductores accidentados son mayoritariamente de sexo masculino, sería de utilidad contar con el dato de cantidad de conductores de cada sexo, así como el total de trabajadores del transporte diferenciado por sexo. En los roles de pasajero y peatón la diferencia entre sexos no es tan marcada.
+En el gráfico de barras se observa que el rol del conductor es el que predomina, esto es el resultado esperado, todos los vehículos llevan conductor y no necesariamente pasajeros. Si se analiza según sexo, los conductores accidentados son mayoritariamente de sexo masculino. En los roles de pasajero y peatón la diferencia entre sexos no es tan marcada.
 
 
 \newpage
@@ -385,7 +385,7 @@ En el gráfico de barras se observa que el rol del conductor es el que predomina
 ## Gravedad del accidente según tipo de vehículo. 
 
 Profundizando en el análisis de los datos, se puede ver la relación entre tipo de vehículo y gravedad del accidente.   
-Del gráfico siguiente se observa que la gravedad de la lesión es mayor en las motos y en las bicicletas, la mayor proporción de personas que resultaron ilesas en un accidente de tránsito viajaba en auto. Y que la mayor proporción de fallecidos proviene de las motos.
+Del gráfico siguiente se observa que la gravedad de la lesión es mayor en las motos ,y la mayor proporción de personas que resultaron ilesas en un accidente de tránsito viajaba en auto. Además, la mayor proporción de fallecidos proviene de accidentes en moto.
 
 ```{r, fig.cap="Gráfico de barras apiladas al cien por ciento con la distribución proporcional de la cantidad de personas accidentadas por tipo de vehículo según gravedad del accidente. Uruguay 2013-2021."}
 personas_13_21 %>%
@@ -404,24 +404,23 @@ personas_13_21 %>%
 
 ## Comentarios finales
 
-Surgieron varios hallazgos una vez finalizado el análisis de estos datos,
-el principal de ellos, nos parece fue que la cantidad de accidentes ha tenido
-una leve disminucion respecto al año 2013. A partir de ese año, 
-los accidentes se mantienen en un rango similar hasta el 2020, que como era de
-esperarse previo a comenzar el análisis, en los meses de marzo, abril, mayo y
-junio en los que la cantidad de accidentes decae más que notoriamente debido 
-a la disminución de ciculación como consecuencia del comienzo de la pandemia.
+Una vez finalizado el análisis de estos datos, podemos resumir las conclusiones que hemos obtenido.
+La cantidad de accidentes de tránsito en Uruguay ha tenido
+una leve disminución respecto al año 2013. A partir de ese año, 
+los accidentes se mantienen en un rango similar hasta el año 2020. Como era de esperarse previo a comenzar el análisis, en los meses de marzo, abril, mayo y
+junio la cantidad de accidentes decae más que notoriamente debido 
+a la disminución de circulación como consecuencia del comienzo de la pandemia.
 Se observa una leve tendencia a la baja en el período analizado. 
 También hallamos que en diciembre de todos los años de los que disponíamos 
-datos suele haber una mayor cantidad de acidentes que en el resto del año,
+datos suele haber una mayor cantidad de accidentes que en el resto del año,
 lo que asociamos al comienzo de vacaciones y las fiestas de fin de año.
 Otro hallazgo fue que los vehículos que tienen mayor participación en 
-accidentes de tránsito son los autos y las motos, lo que asociamos con
-la composición del parque automotor del país.  
+accidentes de tránsito son los autos y las motos, abarcando aproximadamente el 81% de los accidentes totales,lo que asociamos con la composición del parque automotor del país. 
+A su vez, la moto es el vehículo con mayor proporción de accidentes en los que la persona resultó herida o fallece. Mientras que la mayoría de accidentes donde el individuo salió ileso ocurrieron en auto.  
 Por otra parte, gracias al análisis por departamento, podemos concluir que,
-si contamos accidentes cada 1000 habitantes, Maldonado es el departamento con
+si observamos cuantos accidentes sucedieron cada 1000 habitantes, Maldonado es el departamento con la
 mayor cantidad de accidentes.
-Gracias a la comparación entre las variables sexo y rol de la persona accidentada
+A partir de la comparación entre las variables sexo y rol de la persona accidentada
 hallamos que los conductores accidentados son mayoritariamente de sexo masculino.
 Y por último viendo la gravedad del accidente dependiendo el tipo de vehículo,
 observamos que los vehículos involucrados en accidentes con mayor gravedad de
@@ -430,11 +429,12 @@ la lesión son las motos y bicicletas.
 
 ## Comentarios finales
 
-Las conluciones una vez finalizado la investigación son las siguientes.
-Primero es que la cantidad de accidentes ha tenido una leve disminución con respecto al año 2013. A partir de ese año, los accidentes se mantienen en un rango similar hasta el 2020, año en que comenzo la pandemia. Como era de esperarse, en dicho año, mas precisamente en los meses de marzo, abril, mayo y junio, la cantidad de accidentes descendió notoriamente a causa de la poca circulación de la población. Lo principal a destacar es la baja en la cantidad de accidentes.
+Las conlusiones una vez finalizado la investigación son las siguientes.
+Primero es que la cantidad de accidentes ha tenido una leve disminución con respecto al año 2013. A partir de ese año, los accidentes se mantienen en un rango similar hasta el 2020, año en que comenzó la pandemia. Como era de esperarse, en dicho año, mas precisamente en los meses de marzo, abril, mayo y junio, la cantidad de accidentes descendió notoriamente a causa de la poca circulación de la población. Lo principal a destacar es la baja en la cantidad de accidentes.
 La segunda conlución, es que en diciembre siempre aumentan los accidentes. Esto lo asociamos al comienzo de vacaciones y las fiestas de fin de año.
 Otro deduccion que confirmamos, ya que en lo previo era lo que se esperaba, es que los autos y las motos son los vehiculos con mayor participacion de accidentes. Esto lo vinculamos con la composicion del parque automotor del pais.
 Con respecto al analisis por departamento, vemos que Maldonado es el de mayor cantidad de accidentes cada 1000 habitantes. Como observamos anteriormente, en diciembre de cada año aumentan los accidentes debido a la mayor movilidad como consecuencia de las fiestas y las vacaciones. Maldonado es uno de los lugares más turísticos del país, por lo que recibe muchas personas. Concluimos que esa es una de las principales razones por la cual Maldonado es el departamento con mayor cantidad de accidentes cada 1000 habitantes.
 Gracias a la comparación entre las variables sexo y rol de la persona accidentada
 hallamos que los conductores accidentados son mayoritariamente de sexo masculino.
 Para finalizar, gracias a la comparacion entre el vehiculo y la gravedad del accidente, deducimos que los autos y las motos son los transportes que generan más fallecidos. Y que en los accidentes sin heridos, los autos son los que tienen mayor porcentaje. Podemos afirmar que el auto es mas seguro que las motos.
+
